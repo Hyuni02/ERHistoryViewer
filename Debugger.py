@@ -10,4 +10,5 @@ def ExportJson(js, fileName="temp"):
     file.write(json.dumps(js, indent="\t"))
 
 
-ExportJson(er.GetUserStats(er.GetUserNum("ErrorCode02")))
+# ExportJson(er.GetUserStats(er.GetUserNum("ErrorCode02")))
+ExportJson(er.GetGameData())

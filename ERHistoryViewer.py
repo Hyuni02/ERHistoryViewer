@@ -28,7 +28,7 @@ def GetUserStats(userNum, seasonId=currentSeasonId):
 
 # 시즌별 1000위 랭커 정보 얻기
 def GetRanker(seasonId=currentSeasonId):
-    response_ranker = requests.get(f"{baseURL}rank/top/{seasonId}/3")
+    response_ranker = requests.get(f"{baseURL}v1/rank/top/{seasonId}/3", headers=header)
     return response_ranker.json()
 
 # 유저의 최근 90일간 전투기록 얻기
@@ -36,8 +36,19 @@ def GetRanker(seasonId=currentSeasonId):
 # 한 매치에 대한 정보 얻기
 
 # 게임 내부 정보 얻기
+def GetGameData(hash="hash"):
+    response_meta = requests.get(f"{baseURL}v2/data/{hash}", headers=header)
+    return response_meta.json()
 
 
-#
-# def GetCharacterName(characterNum):
-# response_characterName = requests.get()
+# 게임 언어 정보 획득
+def GetLanguageData(language="Korean"):
+    response_language = requests.get(f"{baseURL}v1/l10n/{language}",headers=header)
+    download(response_language.json()["data"]["l10Path"], f"Language_{language}.txt")
+
+def download(url, file_name):
+    with open(file_name, "wb") as file:   # open in binary mode
+        response = requests.get(url)               # get request
+        file.write(response.content)      # write to file
+
+GetLanguageData()

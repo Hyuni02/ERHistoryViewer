@@ -36,6 +36,7 @@ def GetRanker(seasonId=currentSeasonId):
 # 한 매치에 대한 정보 얻기
 
 # 게임 내부 정보 얻기
+# Character : 캐릭터 별 정보
 def GetGameData(hash="hash"):
     response_meta = requests.get(f"{baseURL}v2/data/{hash}", headers=header)
     return response_meta.json()
@@ -46,9 +47,9 @@ def GetLanguageData(language="Korean"):
     response_language = requests.get(f"{baseURL}v1/l10n/{language}",headers=header)
     download(response_language.json()["data"]["l10Path"], f"Language_{language}.txt")
 
+# 게임 언어 파일 다운로드
 def download(url, file_name):
     with open(file_name, "wb") as file:   # open in binary mode
         response = requests.get(url)               # get request
         file.write(response.content)      # write to file
 
-GetLanguageData()

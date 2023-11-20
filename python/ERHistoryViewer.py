@@ -5,7 +5,7 @@ key = "AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U"
 baseURL = "https://open-api.bser.io/"
 header = {"x-api-key": f"{key}"}
 
-currentSeasonId = 19
+currentSeasonId = 20
 
 
 # nickName으로 userNum 찾기

@@ -98,7 +98,9 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:hint="search" />
+            android:hint="search"
+            android:inputType="text|textNoSuggestions"
+            android:maxLines="1" />
 
         <ImageButton
             android:id="@+id/btn_search"

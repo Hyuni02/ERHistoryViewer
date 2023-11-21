@@ -1,13 +1,11 @@
 package com.example.erhistoryviewer;
 
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageSwitcher;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,24 +23,27 @@ import java.util.Map;
 
 public class LobbyActivity extends AppCompatActivity {
 
-    EditText editText;
-
+    EditText edt_userName;
+    LinearLayout lin_userHistory;
     static RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_lobby);
-
-        editText = findViewById(R.id.edt_userName);
-
-        ImageButton button = findViewById(R.id.btn_search);
-        button.setOnClickListener(new View.OnClickListener() {
+        // 뷰 찾기
+        edt_userName = findViewById(R.id.edt_userName);
+        lin_userHistory = findViewById(R.id.lin_userHistory);
+        ImageButton btn_search = findViewById(R.id.btn_search);
+        
+        // 버튼 기능 할당
+        btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 makeRequest();
             }
         });
+
 
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -53,13 +54,13 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     public void makeRequest() {
-        String url = editText.getText().toString();
+        String userName = edt_userName.getText().toString();
 
         StringRequest request = new StringRequest(
                 Request.Method.GET,
-                url,
+                "https://open-api.bser.io/v1/user/nickname?query="+userName,
                 response -> {processResponse(response);},
-                error -> println(error.toString())
+                error -> {println(error.toString()); Log.e("UserNum", error.toString());}
         ) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -76,19 +77,29 @@ public class LobbyActivity extends AppCompatActivity {
 
         request.setShouldCache(false);
         requestQueue.add(request);
-        println("요청 보냄.");
     }
 
     public void println(String data) {
-        Log.d("lobby", data);
         Toast toast = Toast.makeText(this, data, Toast.LENGTH_SHORT);
         toast.show();
     }
 
     public void processResponse(String response) {
 
-        Gson gson = new Gson(); // 변수 선언 || variable declaration
+        Gson gson = new Gson();
+        UserNum userNum = gson.fromJson(response, UserNum.class);
+
         Log.d("Response.json",response);
+
+        if(userNum.code == 200){
+            Log.d("UserNum", userNum.user.userNum);
+
+            //todo userNum을 act_user로 넘기기
+        }
+        else{
+            Log.d("UserNum", userNum.message);
+            println("해당 이름을 가진 플레이어가 없습니다.");
+        }
     }
 
 }

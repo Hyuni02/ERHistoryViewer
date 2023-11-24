@@ -2,8 +2,8 @@ package com.example.erhistoryviewer;
 
 import java.util.ArrayList;
 
-public class RE_userstats {
+public class RE_Season {
     int code;
     String message;
-    ArrayList<userStats> userStats;
+    ArrayList<data_Season> data;
 }

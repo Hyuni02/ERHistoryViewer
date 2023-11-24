@@ -24,6 +24,7 @@ import java.util.Map;
 
 public class LobbyActivity extends AppCompatActivity {
 
+    ImageButton btn_search;
     EditText edt_userName;
     LinearLayout lin_userHistory;
     static RequestQueue requestQueue;
@@ -35,33 +36,39 @@ public class LobbyActivity extends AppCompatActivity {
         // 뷰 찾기
         edt_userName = findViewById(R.id.edt_userName);
         lin_userHistory = findViewById(R.id.lin_userHistory);
-        ImageButton btn_search = findViewById(R.id.btn_search);
+        btn_search = findViewById(R.id.btn_search);
         
         // 버튼 기능 할당
-        btn_search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                makeRequest();
-            }
-        });
-
+        SetOnClick();
 
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(getApplicationContext());
         }
-
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
     }
 
-    public void makeRequest() {
+    private void SetOnClick(){
+        btn_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Request_UserNum();
+            }
+        });
+    }
+
+    private void Request_UserNum() {
+        Log.d("Request", "Request UserNum");
         String userName = edt_userName.getText().toString();
 
         StringRequest request = new StringRequest(
                 Request.Method.GET,
                 "https://open-api.bser.io/v1/user/nickname?query="+userName,
-                response -> {processResponse(response);},
-                error -> {println(error.toString()); Log.e("UserNum", error.toString());}
+                response -> {
+                    Response_UserNum(response);
+                    },
+                error -> {
+                    println(error.toString());
+                    Log.e("UserNum", error.toString());
+                }
         ) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -80,29 +87,26 @@ public class LobbyActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
-    public void println(String data) {
+    private void println(String data) {
         Toast toast = Toast.makeText(this, data, Toast.LENGTH_SHORT);
         toast.show();
     }
 
-    public void processResponse(String response) {
+    private void Response_UserNum(String response) {
 
         Gson gson = new Gson();
-        RE_UserNum re_userNum = gson.fromJson(response, RE_UserNum.class);
+        RE_UserNum re = gson.fromJson(response, RE_UserNum.class);
 
-        Log.d("Response.json",response);
+        Log.d("Response_UserNum",response);
 
-        if(re_userNum.code == 200){
-//            Log.d("UserNum", userNum.user.userNum);
-
-            //todo userNum을 act_user로 넘기기
+        if(re.code == 200){
             Intent intent = new Intent(this, UserActivity.class);
-            intent.putExtra("userNum", re_userNum.user.userNum);
+            intent.putExtra("userNum", re.user.userNum);
             startActivity(intent);
             finish();
         }
         else{
-            Log.d("UserNum", re_userNum.message);
+            Log.d("UserNum", re.message);
             println("해당 이름을 가진 플레이어가 없습니다.");
         }
     }

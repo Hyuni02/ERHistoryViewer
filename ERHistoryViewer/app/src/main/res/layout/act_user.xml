@@ -51,11 +51,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            tools:srcCompat="@drawable/movie" />
+            app:srcCompat="@drawable/movie" />
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="0"
             android:orientation="vertical">
 
@@ -70,6 +70,7 @@
                 android:id="@+id/txt_level"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="LV 117"
                 android:textSize="24sp"
                 tools:layout_margin="10px" />
@@ -78,6 +79,7 @@
                 android:id="@+id/txt_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:autoSizeTextType="uniform"
                 android:text="ErrorCode02"
                 android:textSize="24sp"

@@ -1,7 +1,9 @@
 package com.example.erhistoryviewer;
 
+import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +29,16 @@ public class UserActivity extends AppCompatActivity {
         TextView txt_level = findViewById(R.id.txt_level);
         TextView txt_nickname = findViewById(R.id.txt_nickname);
 
-        txt_nickname.setText(getIntent().getStringExtra("nickName"));
+        Intent intent = getIntent();
+        Log.d("userNum", intent.getStringExtra("userNum"));
+        //todo 유저번호로 userStats받아오기
+        
+        //아래 함수는 클래스의 매서드
+        //todo userStats에서 닉네임 추출
+        //todo userStats에서 mmr추출
+        //todo 추출한 mmr로 티어 이미지 모이기
+//        txt_nickname.setText("");
 
     }
+
 }

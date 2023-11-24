@@ -88,22 +88,21 @@ public class LobbyActivity extends AppCompatActivity {
     public void processResponse(String response) {
 
         Gson gson = new Gson();
-        UserNum userNum = gson.fromJson(response, UserNum.class);
+        RE_UserNum re_userNum = gson.fromJson(response, RE_UserNum.class);
 
         Log.d("Response.json",response);
 
-        if(userNum.code == 200){
-            Log.d("UserNum", userNum.user.userNum);
+        if(re_userNum.code == 200){
+//            Log.d("UserNum", userNum.user.userNum);
 
             //todo userNum을 act_user로 넘기기
-            Intent intent = new Intent(LobbyActivity.this, UserActivity.class);
-            intent.putExtra("userNum",userNum.user.userNum);
-            intent.putExtra("nickName",userNum.user.nickName);
+            Intent intent = new Intent(this, UserActivity.class);
+            intent.putExtra("userNum", re_userNum.user.userNum);
             startActivity(intent);
             finish();
         }
         else{
-            Log.d("UserNum", userNum.message);
+            Log.d("UserNum", re_userNum.message);
             println("해당 이름을 가진 플레이어가 없습니다.");
         }
     }

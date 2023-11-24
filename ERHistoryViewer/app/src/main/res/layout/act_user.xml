@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="0"
-            android:src="?attr/actionModeCloseDrawable" />
+            android:src="@android:drawable/ic_menu_revert" />
 
         <EditText
             android:id="@+id/edt_userName"
@@ -51,7 +51,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:src="@tools:sample/avatars"
             tools:srcCompat="@drawable/movie" />
 
         <LinearLayout
@@ -65,7 +64,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@tools:sample/avatars"
                 app:srcCompat="@drawable/movie" />
 
             <TextView

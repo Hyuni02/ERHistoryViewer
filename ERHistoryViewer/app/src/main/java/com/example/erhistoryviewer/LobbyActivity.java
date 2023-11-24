@@ -1,5 +1,6 @@
 package com.example.erhistoryviewer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -95,6 +96,11 @@ public class LobbyActivity extends AppCompatActivity {
             Log.d("UserNum", userNum.user.userNum);
 
             //todo userNum을 act_user로 넘기기
+            Intent intent = new Intent(LobbyActivity.this, UserActivity.class);
+            intent.putExtra("userNum",userNum.user.userNum);
+            intent.putExtra("nickName",userNum.user.nickName);
+            startActivity(intent);
+            finish();
         }
         else{
             Log.d("UserNum", userNum.message);

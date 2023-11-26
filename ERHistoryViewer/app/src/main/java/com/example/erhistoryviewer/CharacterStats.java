@@ -7,6 +7,6 @@ public class CharacterStats {
     int maxKillings;
     int top3;
     int wins;
-    int top3Rate;
-    int averageRank;
+    float top3Rate;
+    float averageRank;
 }

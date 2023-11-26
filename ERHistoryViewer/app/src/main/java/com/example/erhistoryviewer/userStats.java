@@ -15,14 +15,14 @@ public class userStats {
     int totalDeaths;
     int escapeCount;
     float rankPercent;
-    int averageRank;
-    int averageKills;
+    float averageRank;
+    float averageKills;
     float averageAssistants;
-    int averageHunts;
-    int top1;
-    int top2;
-    int top3;
-    int top5;
-    int top7;
+    float averageHunts;
+    float top1;
+    float top2;
+    float top3;
+    float top5;
+    float top7;
     ArrayList<CharacterStats> characterStats;
 }

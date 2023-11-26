@@ -56,6 +56,8 @@ public class UserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_user);
 
+        //todo 로딩창 구현
+        
         Init();
 
         btn_tolobby = findViewById(R.id.btn_tolobby);
@@ -80,32 +82,25 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void SetUserStats() {
-        txt_nickname.setText(re_userstats.userStats.get(0).nickname);
+        txt_nickname.setText(re_userstats.userStats.get(0).nickname); //todo 한글 깨짐 수정하기
         //todo 레벨 표시
         //todo 티어 표시
         SetUserStats_MostCharacter();
     }
 
     private void SetUserStats_MostCharacter() {
-        //todo 모스트 캐릭터 사진 표시
-
         // 닥지지에서 이미지 받아오기
         String charName = CharacterCodetoName(re_userstats.userStats.get(0).characterStats.get(0).characterCode);
         String skinCode = "S000"; //todo 가장 많이 사용한 스킨 찾기 구현
         String url_dak = String.format("https://cdn.dak.gg/assets/er/game-assets/1.9.0/CharResult_%s_%s.png", charName, skinCode);
         Thread thr_GetImage = new Thread(() -> {
             try {
-                // 이미지 URL 경로
                 URL url = new URL(url_dak);
-
-                // web에서 이미지를 가져와 ImageView에 저장할 Bitmap을 만든다.
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setDoInput(true); // 서버로부터 응답 수신
                 conn.connect(); //연결된 곳에 접속할 때 (connect() 호출해야 실제 통신 가능함)
-
                 InputStream is = conn.getInputStream(); //inputStream 값 가져오기
                 bitmap = BitmapFactory.decodeStream(is); // Bitmap으로 변환
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -117,7 +112,6 @@ public class UserActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     private String CharacterCodetoName(int code) {
@@ -129,14 +123,11 @@ public class UserActivity extends AppCompatActivity {
             AssetManager assetManager = this.getAssets();
             InputStream inputStream = assetManager.open("characterindex.csv");
             CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, "EUC-KR"));
-
             List<String[]> allContent = csvReader.readAll();
             for (String[] content : allContent) {
-                Log.d("CharacterIndex", content[0] + "\t" + content[1] + "\t" + content[2]);
+               Log.d("CharacterIndex", content[0] + "\t" + content[1] + "\t" + content[2]);
                 CharacterIndex.add(new charIndex(content[0], content[1], content[2]));
             }
-
-
         } catch (IOException | CsvException e) {
             e.printStackTrace();
         }

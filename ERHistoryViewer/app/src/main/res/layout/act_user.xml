@@ -104,25 +104,29 @@
     </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tablayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_userinfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="유저정보" />
 
         <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_matchhistory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="대전기록" />
 
     </com.google.android.material.tabs.TabLayout>
 
-    <fragment
+    <FrameLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </fragment>
+    </FrameLayout>
 
 </LinearLayout>

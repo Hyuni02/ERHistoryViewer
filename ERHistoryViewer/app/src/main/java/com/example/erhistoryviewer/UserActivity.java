@@ -7,17 +7,21 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
@@ -49,6 +53,13 @@ public class UserActivity extends AppCompatActivity {
 
     Bitmap bitmap;
 
+    frg_userInfo frg_userInfo;
+    frg_matchhistory frg_matchhistory;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+
+    TabLayout tabLayout;
+
     List<charIndex> CharacterIndex = new ArrayList<>();
 
     @Override
@@ -67,6 +78,7 @@ public class UserActivity extends AppCompatActivity {
         img_tier = findViewById(R.id.img_tier);
         txt_level = findViewById(R.id.txt_level);
         txt_nickname = findViewById(R.id.txt_nickname);
+        tabLayout = findViewById(R.id.tablayout);
 
         Log.d("userNum", Objects.requireNonNull(getIntent().getStringExtra("userNum")));
 
@@ -78,7 +90,12 @@ public class UserActivity extends AppCompatActivity {
 
         Request_DataSeason();
 
+        fragmentManager = getSupportFragmentManager();
+        frg_userInfo = new frg_userInfo();
+        frg_matchhistory = new frg_matchhistory();
+        fragmentTransaction = fragmentManager.beginTransaction();
 
+        fragmentTransaction.replace(R.id.content, frg_userInfo).commit();
     }
 
     private void SetUserStats() {
@@ -142,6 +159,36 @@ public class UserActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LobbyActivity.class);
             startActivity(intent);
         });
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+           @Override
+           public void onTabSelected(TabLayout.Tab tab){
+               Log.d("Change Tab", "Change Tab to " + tab.getPosition());
+               ChangeFragment_content(tab.getPosition());
+           }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    private void ChangeFragment_content(int index){
+        fragmentTransaction = fragmentManager.beginTransaction();
+        switch (index){
+            case 0:
+                fragmentTransaction.replace(R.id.content, frg_userInfo).commit();
+                break;
+            case 1:
+                fragmentTransaction.replace(R.id.content, frg_matchhistory).commit();
+                break;
+        }
     }
 
     private void Request_DataSeason() {

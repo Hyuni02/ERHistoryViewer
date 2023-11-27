@@ -27,10 +27,11 @@
             android:text="코발트" />
     </com.google.android.material.tabs.TabLayout>
 
-    <fragment
-        android:id="@+id/frg_content"
+    <FrameLayout
+        android:id="@+id/content_matchhsitory"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </fragment>
+    </FrameLayout>
+
 </LinearLayout>

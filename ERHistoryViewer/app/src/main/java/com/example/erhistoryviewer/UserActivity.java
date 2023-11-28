@@ -105,7 +105,7 @@ public class UserActivity extends AppCompatActivity {
 
     private void SetUserStats() {
         Log.d("NickName",re_userstats.userStats.get(0).nickname);
-        txt_nickname.setText(re_userstats.userStats.get(0).nickname); //todo 한글 깨짐 수정하기
+        txt_nickname.setText(re_userstats.userStats.get(0).nickname);
         //todo 레벨 표시
         //todo 티어 표시
         SetUserStats_MostCharacter();

@@ -87,11 +87,6 @@ public class LobbyActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
-    private void println(String data) {
-        Toast toast = Toast.makeText(this, data, Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
     private void Response_UserNum(String response) {
 
         Gson gson = new Gson();
@@ -109,6 +104,11 @@ public class LobbyActivity extends AppCompatActivity {
             Log.d("UserNum", re.message);
             println("해당 이름을 가진 플레이어가 없습니다.");
         }
+    }
+
+    private void println(String data) {
+        Toast toast = Toast.makeText(this, data, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
 }

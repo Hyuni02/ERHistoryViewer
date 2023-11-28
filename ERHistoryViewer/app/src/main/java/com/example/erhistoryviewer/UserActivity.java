@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -99,6 +99,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void SetUserStats() {
+        Log.d("NickName",re_userstats.userStats.get(0).nickname);
         txt_nickname.setText(re_userstats.userStats.get(0).nickname); //todo 한글 깨짐 수정하기
         //todo 레벨 표시
         //todo 티어 표시
@@ -112,6 +113,7 @@ public class UserActivity extends AppCompatActivity {
         String url_dak = String.format("https://cdn.dak.gg/assets/er/game-assets/1.9.0/CharResult_%s_%s.png", charName, skinCode);
         Thread thr_GetImage = new Thread(() -> {
             try {
+                Log.d("Image from web", charName + "[" + skinCode + "]");
                 URL url = new URL(url_dak);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setDoInput(true); // 서버로부터 응답 수신
@@ -152,7 +154,7 @@ public class UserActivity extends AppCompatActivity {
 
     private void SetOnClick() {
         btn_search.setOnClickListener(v -> {
-
+            Request_UserNum();
         });
 
         btn_tolobby.setOnClickListener(v -> {
@@ -281,6 +283,57 @@ public class UserActivity extends AppCompatActivity {
             Log.d("UserStats", re.message);
             println("유저 검색 오류" + re.message);
             re_userstats = null;
+        }
+    }
+
+    private void Request_UserNum() {
+        Log.d("Request", "Request UserNum");
+        String userName = edt_userName.getText().toString();
+
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                "https://open-api.bser.io/v1/user/nickname?query="+userName,
+                response -> {
+                    Response_UserNum(response);
+                },
+                error -> {
+                    println(error.toString());
+                    Log.e("UserNum", error.toString());
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> params = new HashMap<String,String>();
+                return params;
+            }
+            @Override
+            public  Map<String, String> getHeaders() throws AuthFailureError{
+                Map<String, String> header = new HashMap<>();
+                header.put("x-api-key","AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U");
+                return header;
+            }
+        };
+
+        request.setShouldCache(false);
+        requestQueue.add(request);
+    }
+
+    private void Response_UserNum(String response) {
+
+        Gson gson = new Gson();
+        RE_UserNum re = gson.fromJson(response, RE_UserNum.class);
+
+        Log.d("Response_UserNum",response);
+
+        if(re.code == 200){
+            Intent intent = new Intent(this, UserActivity.class);
+            intent.putExtra("userNum", re.user.userNum);
+            startActivity(intent);
+            finish();
+        }
+        else{
+            Log.d("UserNum", re.message);
+            println("해당 이름을 가진 플레이어가 없습니다.");
         }
     }
 

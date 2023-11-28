@@ -76,7 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="LV 000"
+                android:text="LV 0"
                 android:textColor="#FFFFFF"
                 android:textSize="24sp"
                 tools:layout_margin="5dp" />

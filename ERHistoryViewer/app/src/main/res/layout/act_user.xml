@@ -43,90 +43,126 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/userinfo"
+    <ScrollView
+        android:id="@+id/scrollview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#4E4E4E"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/img_mostcharacter"
-            android:layout_width="200dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0"
-            app:srcCompat="@drawable/img_mostcharacter" />
+        android:layout_height="match_parent" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/img_tier"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/userinfo"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/img_eternity" />
+                android:background="#4E4E4E"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/txt_level"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="LV 0"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp"
-                tools:layout_margin="5dp" />
+                <ImageView
+                    android:id="@+id/img_mostcharacter"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    app:srcCompat="@drawable/img_mostcharacter" />
 
-            <TextView
-                android:id="@+id/txt_nickname"
-                android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/img_tier"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        app:srcCompat="@drawable/img_eternity" />
+
+                    <TextView
+                        android:id="@+id/txt_level"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="LV 0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        tools:layout_margin="5dp" />
+
+                    <TextView
+                        android:id="@+id/txt_nickname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:autoSizeTextType="uniform"
+                        android:text="NickName"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        tools:layout_margin="5dp" />
+
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/imageButton3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:src="@android:drawable/stat_notify_sync_noanim" />
+
+            </LinearLayout>
+
+            <Spinner
+                android:id="@+id/spn_season"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:autoSizeTextType="uniform"
-                android:text="NickName"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp"
-                tools:layout_margin="5dp" />
+                android:textAlignment="center"/>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tablayout_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tab_userinfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="유저정보" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tab_matchhistory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="대전기록" />
+
+            </com.google.android.material.tabs.TabLayout>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tablayout_match"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteX="1dp"
+                tools:layout_editor_absoluteY="177dp">
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="랭크" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="일반" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="코발트" />
+            </com.google.android.material.tabs.TabLayout>
 
         </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/imageButton3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:src="@android:drawable/stat_notify_sync_noanim" />
-
-    </LinearLayout>
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tablayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/tab_userinfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="유저정보" />
-
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/tab_matchhistory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="대전기록" />
-
-    </com.google.android.material.tabs.TabLayout>
-
-    <FrameLayout
-        android:id="@+id/content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </FrameLayout>
+    </ScrollView>
 
 </LinearLayout>

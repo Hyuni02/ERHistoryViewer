@@ -6,9 +6,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +55,8 @@ public class UserActivity extends AppCompatActivity {
     TextView txt_level;
     ImageView img_tier;
     ImageView img_mostcharacter;
+
+    Spinner spn_seasons;
     static RequestQueue requestQueue;
 
     RE_Season re_season = null;
@@ -59,13 +65,25 @@ public class UserActivity extends AppCompatActivity {
     Bitmap bitmap;
 
     frg_userInfo frg_userInfo;
-    frg_matchhistory frg_matchhistory;
+    frg_matchHistory frg_matchHistory;
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
 
-    TabLayout tabLayout;
+    TabLayout tabLayout_info;
+    TabLayout tabLayout_match;
 
     List<charIndex> CharacterIndex = new ArrayList<>();
+    List<String> lst_Season = new ArrayList<>();
+
+    int selected_seasonId = -1;
+
+    public enum Selected_Info {userinfo, matchhistory;}
+
+    public Selected_Info selected_info = Selected_Info.userinfo;
+
+    public enum Selected_Match {rank, casual, cobalt;}
+
+    public Selected_Match selected_match = Selected_Match.rank;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +91,7 @@ public class UserActivity extends AppCompatActivity {
         setContentView(R.layout.act_user);
 
         //todo 로딩창 구현
-        
+
         Init();
 
         btn_tolobby = findViewById(R.id.btn_tolobby);
@@ -83,7 +101,9 @@ public class UserActivity extends AppCompatActivity {
         img_tier = findViewById(R.id.img_tier);
         txt_level = findViewById(R.id.txt_level);
         txt_nickname = findViewById(R.id.txt_nickname);
-        tabLayout = findViewById(R.id.tablayout);
+        tabLayout_info = findViewById(R.id.tablayout_info);
+        tabLayout_match = findViewById(R.id.tablayout_match);
+        spn_seasons = findViewById(R.id.spn_season);
 
         Log.d("userNum", Objects.requireNonNull(getIntent().getStringExtra("userNum")));
 
@@ -97,14 +117,41 @@ public class UserActivity extends AppCompatActivity {
 
         fragmentManager = getSupportFragmentManager();
         frg_userInfo = new frg_userInfo();
-        frg_matchhistory = new frg_matchhistory();
+        frg_matchHistory = new frg_matchHistory();
         fragmentTransaction = fragmentManager.beginTransaction();
-
         fragmentTransaction.replace(R.id.content, frg_userInfo).commit();
     }
 
+    private void SetSpnnierSeason() {
+        for (int i = re_season.data.size() - 1; i >= 0; i--) {
+            lst_Season.add(re_season.data.get(i).seasonName);
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                getApplicationContext(),
+                android.R.layout.simple_spinner_item,
+                lst_Season);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spn_seasons.setAdapter(adapter);
+
+        spn_seasons.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                data_Season s = re_season.data.get(re_season.data.size() - 1 - position);
+                selected_seasonId = s.seasonID;
+                Log.d("Season Name", s.seasonName + "/" + s.seasonID);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
     private void SetUserStats() {
-        Log.d("NickName",re_userstats.userStats.get(0).nickname);
+        Log.d("NickName", re_userstats.userStats.get(0).nickname);
         txt_nickname.setText(re_userstats.userStats.get(0).nickname);
         //todo 레벨 표시
         //todo 티어 표시
@@ -149,7 +196,7 @@ public class UserActivity extends AppCompatActivity {
             CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, "EUC-KR"));
             List<String[]> allContent = csvReader.readAll();
             for (String[] content : allContent) {
-               Log.d("CharacterIndex", content[0] + "\t" + content[1] + "\t" + content[2]);
+                Log.d("CharacterIndex", content[0] + "\t" + content[1] + "\t" + content[2]);
                 CharacterIndex.add(new charIndex(content[0], content[1], content[2]));
             }
         } catch (IOException | CsvException e) {
@@ -167,12 +214,29 @@ public class UserActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
-           @Override
-           public void onTabSelected(TabLayout.Tab tab){
-               Log.d("Change Tab", "Change Tab to " + tab.getPosition());
-               ChangeFragment_content(tab.getPosition());
-           }
+        tabLayout_info.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                ChangeTab_Info(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        tabLayout_match.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                ChangeTab_Match(tab.getPosition());
+            }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
@@ -186,16 +250,54 @@ public class UserActivity extends AppCompatActivity {
         });
     }
 
-    private void ChangeFragment_content(int index){
-        fragmentTransaction = fragmentManager.beginTransaction();
-        switch (index){
+    private void ChangeTab_Info(int index) {
+        String tab = "";
+        switch (index) {
             case 0:
-                fragmentTransaction.replace(R.id.content, frg_userInfo).commit();
+                selected_info = Selected_Info.userinfo;
+                tab = "유저정보";
                 break;
             case 1:
-                fragmentTransaction.replace(R.id.content, frg_matchhistory).commit();
+                selected_info = Selected_Info.matchhistory;
+                tab = "대전기록";
                 break;
         }
+        Log.d("Change Tab Info", "Change Tab to " + tab);
+        ChangeTab();
+    }
+
+    private void ChangeTab(){
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+
+        switch (selected_info){
+            case userinfo:
+                fragmentTransaction.replace(R.id.content, frg_userInfo).commit();
+                break;
+            case matchhistory:
+                fragmentTransaction.replace(R.id.content, frg_matchHistory).commit();
+                break;
+        }
+    }
+
+    private void ChangeTab_Match(int index) {
+        String tab = "";
+        switch (index) {
+            case 0:
+                selected_match = Selected_Match.rank;
+                tab = "랭크";
+                break;
+            case 1:
+                selected_match = Selected_Match.casual;
+                tab = "일반";
+                break;
+            case 2:
+                selected_match = Selected_Match.cobalt;
+                tab = "코발트";
+                break;
+        }
+        Log.d("Change Tab Match", "Change Tab to " + tab);
+        frg_userInfo.ChangeFrag(selected_match);
     }
 
     private void Request_DataSeason() {
@@ -241,6 +343,7 @@ public class UserActivity extends AppCompatActivity {
 
         if (re.code == 200) {
             re_season = re;
+            SetSpnnierSeason();
         } else {
             Log.d("DataSeason", re.message);
             println("시즌 검색 오류" + re.message);
@@ -268,6 +371,7 @@ public class UserActivity extends AppCompatActivity {
                 header.put("x-api-key", "AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U");
                 return header;
             }
+
             @Override
             protected Response<String> parseNetworkResponse(NetworkResponse response) {
                 try {
@@ -284,7 +388,7 @@ public class UserActivity extends AppCompatActivity {
         request.setShouldCache(false);
         requestQueue.add(request);
     }
-    
+
     private void Response_UserStats(String response) {
 
         Gson gson = new Gson();
@@ -308,7 +412,7 @@ public class UserActivity extends AppCompatActivity {
 
         StringRequest request = new StringRequest(
                 Request.Method.GET,
-                "https://open-api.bser.io/v1/user/nickname?query="+userName,
+                "https://open-api.bser.io/v1/user/nickname?query=" + userName,
                 response -> {
                     Response_UserNum(response);
                 },
@@ -319,13 +423,14 @@ public class UserActivity extends AppCompatActivity {
         ) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String,String>();
+                Map<String, String> params = new HashMap<String, String>();
                 return params;
             }
+
             @Override
-            public  Map<String, String> getHeaders() throws AuthFailureError{
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> header = new HashMap<>();
-                header.put("x-api-key","AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U");
+                header.put("x-api-key", "AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U");
                 return header;
             }
         };
@@ -339,15 +444,14 @@ public class UserActivity extends AppCompatActivity {
         Gson gson = new Gson();
         RE_UserNum re = gson.fromJson(response, RE_UserNum.class);
 
-        Log.d("Response_UserNum",response);
+        Log.d("Response_UserNum", response);
 
-        if(re.code == 200){
+        if (re.code == 200) {
             Intent intent = new Intent(this, UserActivity.class);
             intent.putExtra("userNum", re.user.userNum);
             startActivity(intent);
             finish();
-        }
-        else{
+        } else {
             Log.d("UserNum", re.message);
             println("해당 이름을 가진 플레이어가 없습니다.");
         }

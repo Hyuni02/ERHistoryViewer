@@ -19,6 +19,8 @@ public class frg_userInfo extends Fragment {
     frg_rank frg_rank;
     frg_casual frg_casual;
     frg_cobalt frg_cobalt;
+
+    UserActivity.Selected_Match selected_match;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

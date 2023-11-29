@@ -77,7 +77,7 @@ public class UserActivity extends AppCompatActivity {
 
     int selected_seasonId = -1;
 
-    public enum Selected_Info {userinfo, matchhistory;}
+    public enum Selected_Info {userinfo, matchhistory; }
 
     public Selected_Info selected_info = Selected_Info.userinfo;
 
@@ -278,6 +278,7 @@ public class UserActivity extends AppCompatActivity {
                 fragmentTransaction.replace(R.id.content, frg_matchHistory).commit();
                 break;
         }
+        //todo info탭 변경 시 현재 선택된 match탭으로 열리게 수정
     }
 
     private void ChangeTab_Match(int index) {
@@ -297,7 +298,13 @@ public class UserActivity extends AppCompatActivity {
                 break;
         }
         Log.d("Change Tab Match", "Change Tab to " + tab);
-        frg_userInfo.ChangeFrag(selected_match);
+        switch (selected_info){
+            case userinfo:
+                frg_userInfo.ChangeFrag(selected_match);
+                break;
+            case matchhistory:
+                frg_matchHistory.ChangeFrag(selected_match);
+        }
     }
 
     private void Request_DataSeason() {

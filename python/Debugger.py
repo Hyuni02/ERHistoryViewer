@@ -16,7 +16,7 @@ def ExportJson(js, fileName="temp"):
 # ExportJson(er.GetUserGames(er.GetUserNum("ErrorCode02")))
 # ExportJson(er.GetGameData("LoadingTip"))
 
-input_username = '한동그라미'
+input_username = 'KCW'
 usernum = er.GetUserNum(input_username)
 season = er.GetSeason()
 ExportJson(season, "./jsons/season")
@@ -26,16 +26,12 @@ userstat = er.GetUserStats(usernum, lastseason)
 username = userstat["userStats"][0]["nickname"]
 
 ExportJson(userstat, f"./jsons/userstat_{username}_{lastseason}")
-
-usergames = er.GetUserGames(usernum)
-ExportJson(usergames, f"./jsons/usergames_{username}")
-next = usergames["next"]
-
+next = None
 for i in range(15):
-    usergames2 = er.GetUserGames(usernum, next)
-    ExportJson(usergames2, f"./jsons/usergames_{username}_{i}")
+    usergames = er.GetUserGames(usernum, next)
+    ExportJson(usergames, f"./jsons/usergames_{username}_{i}")
     try:
-        next = usergames2["next"]
+        next = usergames["next"]
     except:
         print("no next")
         break

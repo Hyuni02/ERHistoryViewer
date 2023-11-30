@@ -1,4 +1,5 @@
 import requests
+import pandas as pd
 import pprint
 
 key = "AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U"
@@ -15,8 +16,11 @@ def GetUserNum(nickName: str):
 
 
 # 유저의 최근 10게임 기록
-def GetUserGames(userNum):
-    response_userGame = requests.get(f"{baseURL}v1/user/games/{userNum}", headers=header)
+def GetUserGames(userNum, next=None):
+    if next == None:
+        response_userGame = requests.get(f"{baseURL}v1/user/games/{userNum}", headers=header)
+    else:
+        response_userGame = requests.get(f"{baseURL}v1/user/games/{userNum}?next={next}", headers=header)
     return response_userGame.json()
 
 
@@ -30,6 +34,11 @@ def GetUserStats(userNum, seasonId=currentSeasonId):
 def GetRanker(seasonId=currentSeasonId):
     response_ranker = requests.get(f"{baseURL}v1/rank/top/{seasonId}/3", headers=header)
     return response_ranker.json()
+
+# 시즌 정보 얻기
+def GetSeason():
+    response_season = GetGameData("Season")
+    return response_season
 
 # 유저의 최근 90일간 전투기록 얻기
 

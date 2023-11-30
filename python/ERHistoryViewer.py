@@ -62,3 +62,7 @@ def download(url, file_name):
         response = requests.get(url)               # get request
         file.write(response.content)      # write to file
 
+# 게임 상세 정보 획득
+def GetGameDetail(gameid):
+    response_gamedetail = requests.get(f"{baseURL}v1/games/{gameid}", headers=header)
+    return response_gamedetail.json()

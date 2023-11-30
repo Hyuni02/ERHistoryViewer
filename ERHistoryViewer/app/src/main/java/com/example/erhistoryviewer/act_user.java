@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -46,8 +47,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class UserActivity extends AppCompatActivity {
+public class act_user extends AppCompatActivity {
 
+
+    String apikey = "AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U";
     EditText edt_userName;
     ImageButton btn_tolobby;
     ImageButton btn_search;
@@ -76,8 +79,8 @@ public class UserActivity extends AppCompatActivity {
     List<String> lst_Season = new ArrayList<>();
 
     int selected_seasonId = -1;
-
-    public enum Selected_Info {userinfo, matchhistory; }
+    String userNum = "";
+    public enum Selected_Info {userinfo, matchhistory;}
 
     public Selected_Info selected_info = Selected_Info.userinfo;
 
@@ -104,8 +107,7 @@ public class UserActivity extends AppCompatActivity {
         tabLayout_info = findViewById(R.id.tablayout_info);
         tabLayout_match = findViewById(R.id.tablayout_match);
         spn_seasons = findViewById(R.id.spn_season);
-
-        Log.d("userNum", Objects.requireNonNull(getIntent().getStringExtra("userNum")));
+        Log.d("userNum", userNum);
 
         SetOnClick();
 
@@ -115,11 +117,37 @@ public class UserActivity extends AppCompatActivity {
 
         Request_DataSeason();
 
+        //todo 대전기록 받아오기
+        for(int i=0;i<5;i++){
+            Request_UserGame(userNum);
+            //todo await 구현 필요
+        }
+
+        //todo 대전기록 분류
+
         fragmentManager = getSupportFragmentManager();
         frg_userInfo = new frg_userInfo();
         frg_matchHistory = new frg_matchHistory();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.content, frg_userInfo).commit();
+    }
+
+    private void Init() {
+        userNum = getIntent().getStringExtra("userNum");
+
+        //캐릭터ID 파일 읽기
+        try {
+            AssetManager assetManager = this.getAssets();
+            InputStream inputStream = assetManager.open("characterindex.csv");
+            CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, "EUC-KR"));
+            List<String[]> allContent = csvReader.readAll();
+            for (String[] content : allContent) {
+                Log.d("CharacterIndex", content[0] + "\t" + content[1] + "\t" + content[2]);
+                CharacterIndex.add(new charIndex(content[0], content[1], content[2]));
+            }
+        } catch (IOException | CsvException e) {
+            e.printStackTrace();
+        }
     }
 
     private void SetSpnnierSeason() {
@@ -189,20 +217,6 @@ public class UserActivity extends AppCompatActivity {
         return CharacterIndex.get(code - 1).name_E;
     }
 
-    private void Init() {
-        try {
-            AssetManager assetManager = this.getAssets();
-            InputStream inputStream = assetManager.open("characterindex.csv");
-            CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, "EUC-KR"));
-            List<String[]> allContent = csvReader.readAll();
-            for (String[] content : allContent) {
-                Log.d("CharacterIndex", content[0] + "\t" + content[1] + "\t" + content[2]);
-                CharacterIndex.add(new charIndex(content[0], content[1], content[2]));
-            }
-        } catch (IOException | CsvException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void SetOnClick() {
         btn_search.setOnClickListener(v -> {
@@ -210,7 +224,7 @@ public class UserActivity extends AppCompatActivity {
         });
 
         btn_tolobby.setOnClickListener(v -> {
-            Intent intent = new Intent(this, LobbyActivity.class);
+            Intent intent = new Intent(this, act_lobby.class);
             startActivity(intent);
         });
 
@@ -266,11 +280,11 @@ public class UserActivity extends AppCompatActivity {
         ChangeTab();
     }
 
-    private void ChangeTab(){
+    private void ChangeTab() {
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
 
-        switch (selected_info){
+        switch (selected_info) {
             case userinfo:
                 fragmentTransaction.replace(R.id.content, frg_userInfo).commit();
                 break;
@@ -298,7 +312,7 @@ public class UserActivity extends AppCompatActivity {
                 break;
         }
         Log.d("Change Tab Match", "Change Tab to " + tab);
-        switch (selected_info){
+        switch (selected_info) {
             case userinfo:
                 frg_userInfo.ChangeFrag(selected_match);
                 break;
@@ -322,7 +336,7 @@ public class UserActivity extends AppCompatActivity {
                             break;
                         }
                     }
-                    Request_UserStats(getIntent().getStringExtra("userNum"), currentSeason);
+                    Request_UserStats(userNum, currentSeason);
                 },
                 error -> {
                     println(error.toString());
@@ -332,7 +346,7 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> header = new HashMap<>();
-                header.put("x-api-key", "AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U");
+                header.put("x-api-key", apikey);
                 return header;
             }
         };
@@ -375,7 +389,7 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> header = new HashMap<>();
-                header.put("x-api-key", "AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U");
+                header.put("x-api-key", apikey);
                 return header;
             }
 
@@ -437,7 +451,7 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> header = new HashMap<>();
-                header.put("x-api-key", "AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U");
+                header.put("x-api-key", apikey);
                 return header;
             }
         };
@@ -454,7 +468,7 @@ public class UserActivity extends AppCompatActivity {
         Log.d("Response_UserNum", response);
 
         if (re.code == 200) {
-            Intent intent = new Intent(this, UserActivity.class);
+            Intent intent = new Intent(this, act_user.class);
             intent.putExtra("userNum", re.user.userNum);
             startActivity(intent);
             finish();
@@ -462,6 +476,60 @@ public class UserActivity extends AppCompatActivity {
             Log.d("UserNum", re.message);
             println("해당 이름을 가진 플레이어가 없습니다.");
         }
+    }
+
+    private int next = 0;
+    private void Request_UserGame(String userNum) {
+        Log.d("Request", next == 0 ? "Request UserGame" : "Request UserGame " + next);
+
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                next == 0 ? "https://open-api.bser.io/v1/user/games/" + userNum
+                        : "https://open-api.bser.io/v1/user/games/" + userNum + "?next=" + next,
+                response -> {
+                    next = Response_UserGame(response);
+                },
+                error -> {
+                    println(error.toString());
+                    Log.e("UserGame", error.toString());
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> header = new HashMap<>();
+                header.put("x-api-key", apikey);
+                return header;
+            }
+        };
+
+        request.setShouldCache(false);
+        requestQueue.add(request);
+    }
+
+    private int Response_UserGame(String response){
+        Gson gson = new Gson();
+        RE_UserGame re = gson.fromJson(response, RE_UserGame.class);
+
+        Log.d("Response_UserGame", response);
+
+        if (re.code == 200) {
+            try{
+                return re.next;
+            }
+            catch (Exception ex){
+                return 0;
+            }
+        } else {
+            Log.d("UserGame", re.message);
+            println("플레이 정보가 없습니다.");
+        }
+        return 0;
     }
 
     private void println(String data) {

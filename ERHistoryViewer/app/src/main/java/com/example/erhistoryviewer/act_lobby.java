@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -22,7 +21,7 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LobbyActivity extends AppCompatActivity {
+public class act_lobby extends AppCompatActivity {
 
     ImageButton btn_search;
     EditText edt_userName;
@@ -95,7 +94,7 @@ public class LobbyActivity extends AppCompatActivity {
         Log.d("Response_UserNum",response);
 
         if(re.code == 200){
-            Intent intent = new Intent(this, UserActivity.class);
+            Intent intent = new Intent(this, act_user.class);
             intent.putExtra("userNum", re.user.userNum);
             startActivity(intent);
             finish();

@@ -1,7 +1,6 @@
 package com.example.erhistoryviewer;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ public class frg_matchHistory extends Fragment {
     frg_casual_his frg_casual_his;
     frg_cobalt_his frg_cobalt_his;
 
-    UserActivity.Selected_Match selected_match;
+    act_user.Selected_Match selected_match;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -36,7 +35,7 @@ public class frg_matchHistory extends Fragment {
         return inflater.inflate(R.layout.frg_matchhistory, container, false);
     }
 
-    public void ChangeFrag(UserActivity.Selected_Match match){
+    public void ChangeFrag(act_user.Selected_Match match){
         fragmentManager = getActivity().getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         switch (match){

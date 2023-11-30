@@ -16,7 +16,7 @@
         android:theme="@style/Theme.ERHistoryViewer"
         tools:targetApi="31">
         <activity
-            android:name=".LobbyActivity"
+            android:name=".act_lobby"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserActivity"></activity>
+        <activity android:name=".act_user"></activity>
     </application>
 
 </manifest>

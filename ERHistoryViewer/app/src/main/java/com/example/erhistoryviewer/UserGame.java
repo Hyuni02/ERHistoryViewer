@@ -1,5 +1,7 @@
 package com.example.erhistoryviewer;
 
+import java.time.LocalDateTime;
+
 public class UserGame {
     int userNum;
     String nickname;

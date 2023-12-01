@@ -16,26 +16,26 @@ def ExportJson(js, fileName="temp", printjs=False):
 # ExportJson(er.GetUserGames(er.GetUserNum("ErrorCode02")))
 # ExportJson(er.GetGameData("LoadingTip"))
 
-ExportJson(er.GetGameDetail(30235719))
+input_username = '섹시뽀짝김용주'
+usernum = er.GetUserNum(input_username)
+season = er.GetSeason()
+ExportJson(season, "./jsons/season")
 
-# input_username = '마르인'
-# usernum = er.GetUserNum(input_username)
-# season = er.GetSeason()
-# ExportJson(season, "./jsons/season")
-#
-# lastseason = season["data"][len(season["data"]) - 1]["seasonID"]
+lastseason = season["data"][len(season["data"]) - 1]["seasonID"]
 # userstat = er.GetUserStats(usernum, lastseason)
-# username = userstat["userStats"][0]["nickname"]
-#
-# ExportJson(userstat, f"./jsons/userstat_{username}_{lastseason}")
-# next = None
-# for i in range(15):
-#     usergames = er.GetUserGames(usernum, next)
-#     ExportJson(usergames, f"./jsons/usergames_{username}_{i}")
-#     try:
-#         next = usergames["next"]
-#     except:
-#         print("no next")
-#         break
-#
-# print("done")
+userstat = er.GetUserStats(usernum, 13)
+username = userstat["userStats"][0]["nickname"]
+
+ExportJson(userstat, f"./jsons/userstat_{username}_{lastseason}")
+next = None
+for i in range(5):
+    usergames = er.GetUserGames(usernum, next)
+    # ExportJson(usergames, f"./jsons/usergames_{input_username}_{i}")
+    ExportJson(usergames, f"./jsons/usergames_{username}_{i}")
+    try:
+        next = usergames["next"]
+    except:
+        print("no next")
+        break
+
+print("done")

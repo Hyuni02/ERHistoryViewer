@@ -61,7 +61,7 @@ public class act_user extends AppCompatActivity {
     static RequestQueue requestQueue;
 
     RE_Season re_season = null;
-    RE_userstats re_userstats = null;
+    RE_UserStats re_userstats = null;
 
     Bitmap bitmap;
 
@@ -106,6 +106,40 @@ public class act_user extends AppCompatActivity {
 
         Init();
 
+        SetViews();
+
+        Log.d("userNum", userNum);
+
+        SetOnClick();
+
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(getApplicationContext());
+        }
+
+        //스레드 시작
+        thd_Request thd_request = new thd_Request("API Request Thread", userNum);
+        thd_request.start();
+    }
+
+    private void Init() {
+        userNum = getIntent().getStringExtra("userNum");
+
+        //캐릭터ID 파일 읽기
+        try {
+            AssetManager assetManager = this.getAssets();
+            InputStream inputStream = assetManager.open("characterindex.csv");
+            CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, "EUC-KR"));
+            List<String[]> allContent = csvReader.readAll();
+            for (String[] content : allContent) {
+                Log.d("CharacterIndex", content[0] + "\t" + content[1] + "\t" + content[2]);
+                CharacterIndex.add(new charIndex(content[0], content[1], content[2]));
+            }
+        } catch (IOException | CsvException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void SetViews(){
         btn_tolobby = findViewById(R.id.btn_tolobby);
         btn_search = findViewById(R.id.btn_search);
         edt_userName = findViewById(R.id.edt_userName);
@@ -130,44 +164,6 @@ public class act_user extends AppCompatActivity {
         content_history_rank = findViewById(R.id.content_history_rank);
         content_history_normal = findViewById(R.id.content_history_normal);
         //content_history_cobalt = findViewById(R.id.content_history_cobalt);
-
-
-
-        Log.d("userNum", userNum);
-
-        SetOnClick();
-
-        if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(getApplicationContext());
-        }
-
-        Request_DataSeason();
-
-        //todo 대전기록 받아오기
-        for(int i=0;i<5;i++){
-            Request_UserGame(userNum);
-            //todo await 구현 필요
-        }
-
-        //todo 대전기록 분류
-    }
-
-    private void Init() {
-        userNum = getIntent().getStringExtra("userNum");
-
-        //캐릭터ID 파일 읽기
-        try {
-            AssetManager assetManager = this.getAssets();
-            InputStream inputStream = assetManager.open("characterindex.csv");
-            CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, "EUC-KR"));
-            List<String[]> allContent = csvReader.readAll();
-            for (String[] content : allContent) {
-                Log.d("CharacterIndex", content[0] + "\t" + content[1] + "\t" + content[2]);
-                CharacterIndex.add(new charIndex(content[0], content[1], content[2]));
-            }
-        } catch (IOException | CsvException e) {
-            e.printStackTrace();
-        }
     }
 
     private void SetSpnnierSeason() {
@@ -356,57 +352,6 @@ public class act_user extends AppCompatActivity {
         }
     }
 
-    private void Request_DataSeason() {
-        Log.d("Request", "Request DataSeason");
-        StringRequest request = new StringRequest(
-                Request.Method.GET,
-                "https://open-api.bser.io/v2/data/Season",
-                response -> {
-                    Response_DataSeason(response);
-                    int currentSeason = 0;
-                    for (int i = 0; i < re_season.data.size(); i++) {
-                        if (re_season.data.get(i).isCurrent == 1) {
-                            currentSeason = re_season.data.get(i).seasonID;
-                            Log.d("Current Season", Integer.toString(currentSeason));
-                            break;
-                        }
-                    }
-                    Request_UserStats(userNum, currentSeason);
-                },
-                error -> {
-                    println(error.toString());
-                    Log.e("Season", error.toString());
-                }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> header = new HashMap<>();
-                header.put("x-api-key", apikey);
-                return header;
-            }
-        };
-
-        request.setShouldCache(false);
-        requestQueue.add(request);
-    }
-
-    private void Response_DataSeason(String response) {
-
-        Gson gson = new Gson();
-        RE_Season re = gson.fromJson(response, RE_Season.class);
-
-        Log.d("Response_DataSeason", response);
-
-        if (re.code == 200) {
-            re_season = re;
-            SetSpnnierSeason();
-        } else {
-            Log.d("DataSeason", re.message);
-            println("시즌 검색 오류" + re.message);
-            re_userstats = null;
-        }
-    }
-
     private void Request_UserStats(String userNum, int seasonId) {
         Log.d("Request", "Request UserStats");
         StringRequest request = new StringRequest(
@@ -448,7 +393,7 @@ public class act_user extends AppCompatActivity {
     private void Response_UserStats(String response) {
 
         Gson gson = new Gson();
-        RE_userstats re = gson.fromJson(response, RE_userstats.class);
+        RE_UserStats re = gson.fromJson(response, RE_UserStats.class);
 
         Log.d("Response_UserStats", response);
 

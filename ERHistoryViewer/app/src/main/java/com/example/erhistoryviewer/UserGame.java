@@ -4,6 +4,8 @@ public class UserGame {
     int userNum;
     String nickname;
     int gameId;
+    int seasonId;
+    int accountLevel;
     int matchingMode;
     int characterNum;
     int skinCode;

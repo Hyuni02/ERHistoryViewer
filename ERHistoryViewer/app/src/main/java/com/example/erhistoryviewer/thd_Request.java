@@ -49,9 +49,18 @@ public class thd_Request extends Thread {
             Log.d("Most Character", Integer.toString(mostCharacter));
 
 
-            //첫번째 대전기록 표시하기
-
             //next가 있으면 5회 || next가 없을 때까지 대전기록 가져오기
+            if(next != 0) {
+                for (int i = 0; i < 10; i++) {
+                    Thread.sleep(1000);
+                    Request_UserGame();
+                    Log.d("next", Integer.toString(next));
+                    if(next == 0){
+                        Log.d("Break", "No More Games");
+                        break;
+                    }
+                }
+            }
 
 
             Log.d("done", "done");
@@ -80,6 +89,7 @@ public class thd_Request extends Thread {
                 : "https://open-api.bser.io/v1/user/games/" + userNum + "?next=" + next);
         RE_UserGame userGame = converter.Convert_UserGame(response_UserGame);
         next = userGame.next;
+        //todo 대전 기록 표시하기
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < userGame.userGames.size(); i++) {
             stringBuilder.append(userGame.userGames.get(i).gameId + "\n");

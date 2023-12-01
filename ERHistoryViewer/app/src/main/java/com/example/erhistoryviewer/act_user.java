@@ -352,61 +352,6 @@ public class act_user extends AppCompatActivity {
         }
     }
 
-    private void Request_UserStats(String userNum, int seasonId) {
-        Log.d("Request", "Request UserStats");
-        StringRequest request = new StringRequest(
-                Request.Method.GET,
-                "https://open-api.bser.io/v1/user/stats/" + userNum + "/" + seasonId,
-                response -> {
-                    Response_UserStats(response);
-                    txt_nickname.setText(re_userstats.userStats.get(0).nickname);
-                },
-                error -> {
-                    println(error.toString());
-                    Log.e("UserStats", error.toString());
-                }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> header = new HashMap<>();
-                header.put("x-api-key", apikey);
-                return header;
-            }
-
-            @Override
-            protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    String utf8String = new String(response.data, "UTF-8");
-                    return Response.success(utf8String, HttpHeaderParser.parseCacheHeaders(response));
-                } catch (UnsupportedEncodingException e) {
-                    return Response.error(new ParseError(e));
-                } catch (Exception e) {
-                    return Response.error(new ParseError(e));
-                }
-            }
-        };
-
-        request.setShouldCache(false);
-        requestQueue.add(request);
-    }
-
-    private void Response_UserStats(String response) {
-
-        Gson gson = new Gson();
-        RE_UserStats re = gson.fromJson(response, RE_UserStats.class);
-
-        Log.d("Response_UserStats", response);
-
-        if (re.code == 200) {
-            re_userstats = re;
-            SetUserStats();
-        } else {
-            Log.d("UserStats", re.message);
-            println("유저 검색 오류" + re.message);
-            re_userstats = null;
-        }
-    }
-
     private void Request_UserNum() {
         Log.d("Request", "Request UserNum");
         String userName = edt_userName.getText().toString();
@@ -456,60 +401,6 @@ public class act_user extends AppCompatActivity {
             Log.d("UserNum", re.message);
             println("해당 이름을 가진 플레이어가 없습니다.");
         }
-    }
-
-    private int next = 0;
-    private void Request_UserGame(String userNum) {
-        Log.d("Request", next == 0 ? "Request UserGame" : "Request UserGame " + next);
-
-        StringRequest request = new StringRequest(
-                Request.Method.GET,
-                next == 0 ? "https://open-api.bser.io/v1/user/games/" + userNum
-                        : "https://open-api.bser.io/v1/user/games/" + userNum + "?next=" + next,
-                response -> {
-                    next = Response_UserGame(response);
-                },
-                error -> {
-                    println(error.toString());
-                    Log.e("UserGame", error.toString());
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                return params;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> header = new HashMap<>();
-                header.put("x-api-key", apikey);
-                return header;
-            }
-        };
-
-        request.setShouldCache(false);
-        requestQueue.add(request);
-    }
-
-    private int Response_UserGame(String response){
-        Gson gson = new Gson();
-        RE_UserGame re = gson.fromJson(response, RE_UserGame.class);
-
-        Log.d("Response_UserGame", response);
-
-        if (re.code == 200) {
-            try{
-                return re.next;
-            }
-            catch (Exception ex){
-                return 0;
-            }
-        } else {
-            Log.d("UserGame", re.message);
-            println("플레이 정보가 없습니다.");
-        }
-        return 0;
     }
 
     private void println(String data) {

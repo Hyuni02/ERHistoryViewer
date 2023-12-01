@@ -12,14 +12,13 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -45,7 +44,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class act_user extends AppCompatActivity {
 
@@ -67,11 +65,6 @@ public class act_user extends AppCompatActivity {
 
     Bitmap bitmap;
 
-    frg_userInfo frg_userInfo;
-    frg_matchHistory frg_matchHistory;
-    FragmentManager fragmentManager;
-    FragmentTransaction fragmentTransaction;
-
     TabLayout tabLayout_info;
     TabLayout tabLayout_match;
 
@@ -87,6 +80,22 @@ public class act_user extends AppCompatActivity {
     public enum Selected_Match {rank, casual, cobalt;}
 
     public Selected_Match selected_match = Selected_Match.rank;
+
+    //스크롤 뷰
+    ScrollView scv_info_rank;
+    ScrollView scv_info_normal;
+    ScrollView scv_info_cobalt;
+    ScrollView scv_history_rank;
+    ScrollView scv_history_normal;
+    ScrollView scv_history_cobalt;
+
+    //컨텐츠
+    LinearLayout content_info_rank;
+    LinearLayout content_info_normal;
+    LinearLayout content_info_cobalt;
+    LinearLayout content_history_rank;
+    LinearLayout content_history_normal;
+    LinearLayout content_history_cobalt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +116,23 @@ public class act_user extends AppCompatActivity {
         tabLayout_info = findViewById(R.id.tablayout_info);
         tabLayout_match = findViewById(R.id.tablayout_match);
         spn_seasons = findViewById(R.id.spn_season);
+        //스크롤뷰
+        scv_info_rank = findViewById(R.id.scv_info_rank);
+        scv_info_normal = findViewById(R.id.scv_info_normal);
+        //scv_info_cobalt = findViewById(R.id.scv_info_cobalt); //todo 코발트 UI추가
+        scv_history_rank = findViewById(R.id.scv_history_rank);
+        scv_history_normal = findViewById(R.id.scv_history_normal);
+        //scv_history_cobalt = findViewById(R.id.scv_history_cobalt);
+        //컨텐츠
+        content_info_rank = findViewById(R.id.content_info_rank);
+        content_info_normal = findViewById(R.id.content_info_normal);
+        //content_info_cobalt = findViewById(R.id.content_info_cobalt);
+        content_history_rank = findViewById(R.id.content_history_rank);
+        content_history_normal = findViewById(R.id.content_history_normal);
+        //content_history_cobalt = findViewById(R.id.content_history_cobalt);
+
+
+
         Log.d("userNum", userNum);
 
         SetOnClick();
@@ -124,12 +150,6 @@ public class act_user extends AppCompatActivity {
         }
 
         //todo 대전기록 분류
-
-        fragmentManager = getSupportFragmentManager();
-        frg_userInfo = new frg_userInfo();
-        frg_matchHistory = new frg_matchHistory();
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.content, frg_userInfo).commit();
     }
 
     private void Init() {
@@ -277,24 +297,8 @@ public class act_user extends AppCompatActivity {
                 break;
         }
         Log.d("Change Tab Info", "Change Tab to " + tab);
-        ChangeTab();
+        ChangeScrollView();
     }
-
-    private void ChangeTab() {
-        fragmentManager = getSupportFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
-
-        switch (selected_info) {
-            case userinfo:
-                fragmentTransaction.replace(R.id.content, frg_userInfo).commit();
-                break;
-            case matchhistory:
-                fragmentTransaction.replace(R.id.content, frg_matchHistory).commit();
-                break;
-        }
-        //todo info탭 변경 시 현재 선택된 match탭으로 열리게 수정
-    }
-
     private void ChangeTab_Match(int index) {
         String tab = "";
         switch (index) {
@@ -312,12 +316,43 @@ public class act_user extends AppCompatActivity {
                 break;
         }
         Log.d("Change Tab Match", "Change Tab to " + tab);
-        switch (selected_info) {
+        ChangeScrollView();
+    }
+
+    private void ChangeScrollView(){
+        scv_info_rank.setVisibility(View.GONE);
+        scv_info_normal.setVisibility(View.GONE);
+        //scv_info_cobalt.setVisibility(View.GONE);
+        scv_history_rank.setVisibility(View.GONE);
+        scv_history_normal.setVisibility(View.GONE);
+        //scv_history_cobalt.setVisibility(View.GONE);
+        switch (selected_info){
             case userinfo:
-                frg_userInfo.ChangeFrag(selected_match);
+                switch (selected_match){
+                    case rank:
+                        scv_info_rank.setVisibility(View.VISIBLE);
+                        break;
+                    case casual:
+                        scv_info_normal.setVisibility(View.VISIBLE);
+                        break;
+                    case cobalt:
+                        //scv_info_cobalt.setVisibility(View.VISIBLE);
+                        break;
+                }
                 break;
             case matchhistory:
-                frg_matchHistory.ChangeFrag(selected_match);
+                switch (selected_match){
+                    case rank:
+                        scv_history_rank.setVisibility(View.VISIBLE);
+                        break;
+                    case casual:
+                        scv_history_normal.setVisibility(View.VISIBLE);
+                        break;
+                    case cobalt:
+                        //scv_history_cobalt.setVisibility(View.VISIBLE);
+                        break;
+                }
+                break;
         }
     }
 

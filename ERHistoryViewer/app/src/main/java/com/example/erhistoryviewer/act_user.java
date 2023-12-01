@@ -117,8 +117,9 @@ public class act_user extends AppCompatActivity {
         }
 
         //스레드 시작
-        thd_Request thd_request = new thd_Request("API Request Thread", userNum);
+        thd_Request thd_request = new thd_Request("API Request Thread", this);
         thd_request.start();
+
     }
 
     private void Init() {
@@ -198,7 +199,6 @@ public class act_user extends AppCompatActivity {
         Log.d("NickName", re_userstats.userStats.get(0).nickname);
         txt_nickname.setText(re_userstats.userStats.get(0).nickname);
         //todo 레벨 표시
-        //todo 티어 표시
         SetUserStats_MostCharacter();
     }
 
@@ -232,7 +232,6 @@ public class act_user extends AppCompatActivity {
     private String CharacterCodetoName(int code) {
         return CharacterIndex.get(code - 1).name_E;
     }
-
 
     private void SetOnClick() {
         btn_search.setOnClickListener(v -> {

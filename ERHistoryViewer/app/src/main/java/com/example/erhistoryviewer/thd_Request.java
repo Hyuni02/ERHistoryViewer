@@ -1,6 +1,8 @@
 package com.example.erhistoryviewer;
 
+
 import android.util.Log;
+import android.os.Handler;
 
 public class thd_Request extends Thread {
     private String thdName = "";
@@ -14,17 +16,23 @@ public class thd_Request extends Thread {
     Converter converter;
     Requester requester;
 
+    act_user act_user;
+    Handler handler = new Handler();
 
-    public thd_Request(String thdname, String userNum) {
+    public thd_Request(String thdname, act_user act_user) {
         // 초기화 작업
         this.thdName = thdname;
         requester = new Requester();
         converter = new Converter();
-        this.userNum = userNum;
+        this.act_user = act_user;
+        Init();
+    }
+
+    private void Init(){
+        userNum = act_user.userNum;
     }
 
     public void run() {
-
         Log.i("시작된 스레드", thdName);
         // 스레드에게 수행시킬 동작들 구현
         try {
@@ -47,6 +55,14 @@ public class thd_Request extends Thread {
             Log.d("Level", Integer.toString(level));
             Log.d("NickName", userName);
             Log.d("Most Character", Integer.toString(mostCharacter));
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    act_user.txt_level.setText("LV " + level);
+                    act_user.txt_nickname.setText(userName);
+                }
+            });
 
 
             //next가 있으면 5회 || next가 없을 때까지 대전기록 가져오기

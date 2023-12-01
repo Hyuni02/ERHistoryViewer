@@ -63,7 +63,7 @@ public class act_user extends AppCompatActivity {
     RE_Season re_season = null;
     RE_UserStats re_userstats = null;
 
-    Bitmap bitmap;
+
 
     TabLayout tabLayout_info;
     TabLayout tabLayout_match;
@@ -195,41 +195,9 @@ public class act_user extends AppCompatActivity {
         });
     }
 
-    private void SetUserStats() {
-        Log.d("NickName", re_userstats.userStats.get(0).nickname);
-        txt_nickname.setText(re_userstats.userStats.get(0).nickname);
-        //todo 레벨 표시
-        SetUserStats_MostCharacter();
-    }
 
-    private void SetUserStats_MostCharacter() {
-        // 닥지지에서 이미지 받아오기
-        String charName = CharacterCodetoName(re_userstats.userStats.get(0).characterStats.get(0).characterCode);
-        String skinCode = "S000"; //todo 가장 많이 사용한 스킨 찾기 구현
-        String url_dak = String.format("https://cdn.dak.gg/assets/er/game-assets/1.9.0/CharResult_%s_%s.png", charName, skinCode);
-        Thread thr_GetImage = new Thread(() -> {
-            try {
-                Log.d("Image from web", charName + "[" + skinCode + "]");
-                URL url = new URL(url_dak);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setDoInput(true); // 서버로부터 응답 수신
-                conn.connect(); //연결된 곳에 접속할 때 (connect() 호출해야 실제 통신 가능함)
-                InputStream is = conn.getInputStream(); //inputStream 값 가져오기
-                bitmap = BitmapFactory.decodeStream(is); // Bitmap으로 변환
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        thr_GetImage.start(); // 작업 Thread 실행
-        try {
-            thr_GetImage.join();
-            img_mostcharacter.setImageBitmap(bitmap);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private String CharacterCodetoName(int code) {
+    public String CharacterCodetoName(int code) {
         return CharacterIndex.get(code - 1).name_E;
     }
 

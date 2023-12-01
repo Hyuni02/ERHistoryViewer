@@ -1,8 +1,15 @@
 package com.example.erhistoryviewer;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.os.Handler;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class thd_Request extends Thread {
     private String thdName = "";
@@ -56,6 +63,7 @@ public class thd_Request extends Thread {
             Log.d("NickName", userName);
             Log.d("Most Character", Integer.toString(mostCharacter));
 
+            //UI스래드 접근
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -78,6 +86,13 @@ public class thd_Request extends Thread {
                 }
             }
 
+            Request_MostCharacterImage();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    act_user.img_mostcharacter.setImageBitmap(bitmap);
+                }
+            });
 
             Log.d("done", "done");
         } catch (InterruptedException e) {
@@ -85,6 +100,25 @@ public class thd_Request extends Thread {
         }
 
         Log.i("종료된 스레드", thdName);
+    }
+
+    Bitmap bitmap;
+
+    private void Request_MostCharacterImage(){
+        Log.d("Request", "MostCharacterImage");
+        String charName = act_user.CharacterCodetoName(mostCharacter);
+        String skinCode = "S000"; //todo 가장 많이 사용한 스킨 찾기 구현
+        String url_dak = String.format("https://cdn.dak.gg/assets/er/game-assets/1.9.0/CharResult_%s_%s.png", charName, skinCode);
+        try {
+            URL url = new URL(url_dak);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoInput(true); // 서버로부터 응답 수신
+            conn.connect(); //연결된 곳에 접속할 때 (connect() 호출해야 실제 통신 가능함)
+            InputStream is = conn.getInputStream(); //inputStream 값 가져오기
+            bitmap = BitmapFactory.decodeStream(is); // Bitmap으로 변환
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void Request_Season() {
@@ -121,7 +155,6 @@ public class thd_Request extends Thread {
         RE_UserStats userStats = converter.Convert_UserStats(response_UserStat);
         userName = userStats.userStats.get(0).nickname;
         mostCharacter = userStats.userStats.get(0).characterStats.get(0).characterCode;
-        //todo 이름, 레벨, 모스트 캐릭터 사진 넣기
     }
 
 }

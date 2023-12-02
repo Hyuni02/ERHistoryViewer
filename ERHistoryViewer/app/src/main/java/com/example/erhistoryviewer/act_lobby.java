@@ -103,7 +103,7 @@ public class act_lobby extends AppCompatActivity {
         }
         else{
             Log.d("UserNum", re.message);
-            println("해당 이름을 가진 플레이어가 없습니다.");
+            println("해당 이름을 가진 플레이어가 없거나 90일 이내 플레이 기록이 없습니다.");
         }
     }
 

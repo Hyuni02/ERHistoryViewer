@@ -105,7 +105,7 @@ public class thd_Request extends Thread {
                 }
             }
 
-
+            PrintMMRS(lastPlaySeasonId);
 
             Log.d("done", "done");
         } catch (InterruptedException e) {
@@ -146,6 +146,7 @@ public class thd_Request extends Thread {
     }
 
     List<GraphPoint> points = new ArrayList<>();
+
     private int Request_UserGame() {
         Log.d("Request", "UserGame");
         String response_UserGame = requester.Get(next == 0 ?
@@ -164,7 +165,7 @@ public class thd_Request extends Thread {
                     //날짜/시즌별 mmr획득량 기록 <시즌, 날짜, mmr>
                     LocalDate date = LocalDate.parse(game.startDtm.split("T")[0]);
                     GraphPoint sameDate = hasDate(date);
-                    if(sameDate == null){
+                    if (sameDate == null) {
                         GraphPoint point = new GraphPoint(game.seasonId, date, game.mmrAfter);
                         points.add(point);
                         Log.d("Add MMR", date + " : " + game.mmrAfter);
@@ -187,7 +188,6 @@ public class thd_Request extends Thread {
                     break;
             }
         }
-        PrintMMRS();
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < userGame.userGames.size(); i++) {
@@ -198,9 +198,9 @@ public class thd_Request extends Thread {
         return userGame.userGames.get(0).seasonId;
     }
 
-    private GraphPoint hasDate(LocalDate date){
-        for(GraphPoint point : points){
-            if(point.getDate().isEqual(date)) {
+    private GraphPoint hasDate(LocalDate date) {
+        for (GraphPoint point : points) {
+            if (point.getDate().isEqual(date)) {
                 return point;
             }
         }
@@ -208,21 +208,26 @@ public class thd_Request extends Thread {
     }
 
     LineData lineData;
-    private void PrintMMRS() {
+
+    private void PrintMMRS(int seasonId) {
         //todo 시즌별로 그래프 자르기
+
+
         //mmr획득량을 그래프로 표시
         lineData = new LineData();
         ArrayList<Entry> chart = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
 
-        for(GraphPoint point : points){
-            chart.add(new Entry(points.indexOf(point) ,point.getMMR()));
-            stringBuilder.append(point.getDate() +"(" + point.getSeasoonId() + ") : " + point.getMMR() + "\n");
+        for (int i = points.size() - 1; i >= 0; i--) {
+            chart.add(new Entry((points.size() - points.indexOf(points.get(i)) - 1), points.get(i).getMMR()));
+            stringBuilder.append((points.size() - points.indexOf(points.get(i)) - 1) + " : " + points.get(i).getDate() + "(" + points.get(i).getSeasoonId() + ") : " + points.get(i).getMMR() + "\n");
         }
-        LineDataSet lineDataSet = new LineDataSet(chart,"MMR");
+
+        LineDataSet lineDataSet = new LineDataSet(chart, "MMR");
         lineDataSet.setColor(Color.RED);
         lineData.addDataSet(lineDataSet);
-        act_user.mmrGraph.setData(lineData);;
+        act_user.mmrGraph.setData(lineData);
+        ;
         act_user.mmrGraph.invalidate();
         act_user.mmrGraph.setTouchEnabled(false);
         Log.d("MMRS", stringBuilder.toString());

@@ -23,6 +23,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.LineData;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.opencsv.CSVReader;
@@ -88,6 +90,7 @@ public class act_user extends AppCompatActivity {
     LinearLayout content_history_normal;
     LinearLayout content_history_cobalt;
 
+    LineChart mmrGraph;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,6 +159,8 @@ public class act_user extends AppCompatActivity {
         content_history_rank = findViewById(R.id.content_history_rank);
         content_history_normal = findViewById(R.id.content_history_normal);
         //content_history_cobalt = findViewById(R.id.content_history_cobalt);
+        //그래프
+        mmrGraph = findViewById(R.id.grp);
     }
 
     private void SetSpnnierSeason() {

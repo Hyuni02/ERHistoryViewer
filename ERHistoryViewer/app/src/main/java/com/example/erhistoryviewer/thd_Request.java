@@ -3,10 +3,15 @@ package com.example.erhistoryviewer;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.text.BoringLayout;
 import android.util.Log;
 import android.os.Handler;
 import android.view.GestureDetector;
+
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,6 +106,7 @@ public class thd_Request extends Thread {
             }
 
 
+
             Log.d("done", "done");
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -163,9 +169,6 @@ public class thd_Request extends Thread {
                         points.add(point);
                         Log.d("Add MMR", date + " : " + game.mmrAfter);
                     }
-                    else{
-                        sameDate.setMMR(game.mmrAfter);
-                    }
                     break;
                 //일반게임
                 case 2:
@@ -204,12 +207,24 @@ public class thd_Request extends Thread {
         return null;
     }
 
+    LineData lineData;
     private void PrintMMRS() {
-        //todo mmr획득량을 그래프로 표시
+        //todo 시즌별로 그래프 자르기
+        //mmr획득량을 그래프로 표시
+        lineData = new LineData();
+        ArrayList<Entry> chart = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
+
         for(GraphPoint point : points){
-            stringBuilder.append(point.date +"(" + point.getSeasoonId() + ") : " + point.getMMR() + "\n");
+            chart.add(new Entry(points.indexOf(point) ,point.getMMR()));
+            stringBuilder.append(point.getDate() +"(" + point.getSeasoonId() + ") : " + point.getMMR() + "\n");
         }
+        LineDataSet lineDataSet = new LineDataSet(chart,"MMR");
+        lineDataSet.setColor(Color.RED);
+        lineData.addDataSet(lineDataSet);
+        act_user.mmrGraph.setData(lineData);;
+        act_user.mmrGraph.invalidate();
+        act_user.mmrGraph.setTouchEnabled(false);
         Log.d("MMRS", stringBuilder.toString());
     }
 

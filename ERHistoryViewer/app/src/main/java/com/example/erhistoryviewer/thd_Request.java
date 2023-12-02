@@ -66,10 +66,6 @@ public class thd_Request extends Thread {
 
             //유저 게임 기록 1개 불러오기
             lastPlaySeasonId = Request_UserGame();
-            if (lastPlaySeasonId == 0) {
-                //todo 일반전일 경우 날짜를 계산해서 seasonId 변경
-
-            }
             Thread.sleep(1000);
             Log.d("next", Integer.toString(next));
 
@@ -143,7 +139,6 @@ public class thd_Request extends Thread {
         return season;
     }
 
-    //todo 정렬을 하던가 순서대로 저장하던가
     List<GraphPoint> points = new ArrayList<>();
     private int Request_UserGame() {
         Log.d("Request", "UserGame");
@@ -160,7 +155,7 @@ public class thd_Request extends Thread {
                 case 3:
                     //todo 대전기록-랭크 패널에 대전기록 추가 (선택한 시즌에 맞춰 visible/gone)
 
-                    //todo mmr획득량을 딕셔너리에 기록 <날짜, mmr>
+                    //날짜/시즌별 mmr획득량 기록 <시즌, 날짜, mmr>
                     LocalDate date = LocalDate.parse(game.startDtm.split("T")[0]);
                     GraphPoint sameDate = hasDate(date);
                     if(sameDate == null){

@@ -3,6 +3,7 @@ package com.example.erhistoryviewer;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.BoringLayout;
 import android.util.Log;
 import android.os.Handler;
 import android.view.GestureDetector;
@@ -14,7 +15,15 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class thd_Request extends Thread {
     private String thdName = "";
@@ -100,7 +109,6 @@ public class thd_Request extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         Log.i("종료된 스레드", thdName);
     }
 
@@ -135,6 +143,8 @@ public class thd_Request extends Thread {
         return season;
     }
 
+    //todo 정렬을 하던가 순서대로 저장하던가
+    List<GraphPoint> points = new ArrayList<>();
     private int Request_UserGame() {
         Log.d("Request", "UserGame");
         String response_UserGame = requester.Get(next == 0 ?
@@ -143,33 +153,43 @@ public class thd_Request extends Thread {
         RE_UserGame userGame = converter.Convert_UserGame(response_UserGame);
         next = userGame.next;
 
-        //todo 대전 기록 표시하기
         for (int i = 0; i < userGame.userGames.size(); i++) {
             UserGame game = userGame.userGames.get(i);
             switch (game.matchingMode) {
                 //랭크게임
                 case 3:
-                    //대전기록-랭크 패널에 대전기록 추가 (선택한 시즌에 맞춰 visible/gone)
+                    //todo 대전기록-랭크 패널에 대전기록 추가 (선택한 시즌에 맞춰 visible/gone)
 
-                    //mmr획득량을 딕셔너리에 기록 <날짜, mmr>
-
-                    //mmr획득량을 그래프로 표시
+                    //todo mmr획득량을 딕셔너리에 기록 <날짜, mmr>
+                    LocalDate date = LocalDate.parse(game.startDtm.split("T")[0]);
+                    GraphPoint sameDate = hasDate(date);
+                    if(sameDate == null){
+                        GraphPoint point = new GraphPoint(game.seasonId, date, game.mmrAfter);
+                        points.add(point);
+                        Log.d("Add MMR", date + " : " + game.mmrAfter);
+                    }
+                    else{
+                        sameDate.setMMR(game.mmrAfter);
+                    }
                     break;
                 //일반게임
                 case 2:
-                    //대전기록-일반 패널에 대전기록 추가
+                    //todo 대전기록-일반 패널에 대전기록 추가
 
                     //날짜를 이용해서 시즌 계산 seasonId 수정
                     game.seasonId = GetNormalSeasonId(game.startDtm);
 
-                    //(선택한 시즌에 맞춰 visible/gone)
+                    //todo (선택한 시즌에 맞춰 visible/gone)
+
                     break;
                 //코발트
                 case 6:
                     //todo 코발트 대전기록 표시
+
                     break;
             }
         }
+        PrintMMRS();
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < userGame.userGames.size(); i++) {
@@ -180,20 +200,38 @@ public class thd_Request extends Thread {
         return userGame.userGames.get(0).seasonId;
     }
 
+    private GraphPoint hasDate(LocalDate date){
+        for(GraphPoint point : points){
+            if(point.getDate().isEqual(date)) {
+                return point;
+            }
+        }
+        return null;
+    }
+
+    private void PrintMMRS() {
+        //todo mmr획득량을 그래프로 표시
+        StringBuilder stringBuilder = new StringBuilder();
+        for(GraphPoint point : points){
+            stringBuilder.append(point.date +"(" + point.getSeasoonId() + ") : " + point.getMMR() + "\n");
+        }
+        Log.d("MMRS", stringBuilder.toString());
+    }
+
     private int GetNormalSeasonId(String date) {
         for (int i = re_season.data.size() - 1; i >= 0; i--) {
             data_Season season = re_season.data.get(i);
             LocalDate date_seasonEnd = LocalDate.parse(season.seasonEnd.split(" ")[0]);
             LocalDate date_seasonStart = LocalDate.parse(season.seasonStart.split(" ")[0]);
             LocalDate date_game = LocalDate.parse(date.split("T")[0]);
-            if(date_seasonEnd.isAfter(date_game)){
-                if(date_seasonStart.isBefore(date_game)){
+            if (date_seasonEnd.isAfter(date_game)) {
+                if (date_seasonStart.isBefore(date_game)) {
                     Log.d("SeasonId Found", date.split("T")[0] + "의 seasonId : " + season.seasonID);
                     return season.seasonID;
                 }
             }
         }
-        Log.e("SeasonId Not Found",date + "의 seasonId를 찾을 수 없음");
+        Log.e("SeasonId Not Found", date + "의 seasonId를 찾을 수 없음");
         return -1;
     }
 
@@ -201,7 +239,7 @@ public class thd_Request extends Thread {
         Log.d("Request", "UserStats " + lastPlaySeasonId);
         String response_UserStat = requester.Get("https://open-api.bser.io/v1/user/stats/" + userNum + "/" + lastPlaySeasonId);
         RE_UserStats userStats = converter.Convert_UserStats(response_UserStat);
-        if(userStats.code == 404){
+        if (userStats.code == 404) {
             lastPlaySeasonId--;
             Request_UserStats();
             return;

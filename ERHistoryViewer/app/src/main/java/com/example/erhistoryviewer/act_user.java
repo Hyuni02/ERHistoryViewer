@@ -151,7 +151,7 @@ public class act_user extends AppCompatActivity {
         //스크롤뷰
         scv_info_rank = findViewById(R.id.scv_info_rank);
         scv_info_normal = findViewById(R.id.scv_info_normal);
-        scv_info_cobalt = findViewById(R.id.scv_info_cobalt); //todo 코발트 UI추가
+        scv_info_cobalt = findViewById(R.id.scv_info_cobalt);
         scv_history_rank = findViewById(R.id.scv_history_rank);
         scv_history_normal = findViewById(R.id.scv_history_normal);
         scv_history_cobalt = findViewById(R.id.scv_history_cobalt);
@@ -272,10 +272,10 @@ public class act_user extends AppCompatActivity {
     private void ChangeScrollView() {
         scv_info_rank.setVisibility(View.GONE);
         scv_info_normal.setVisibility(View.GONE);
-        //scv_info_cobalt.setVisibility(View.GONE);
+        scv_info_cobalt.setVisibility(View.GONE);
         scv_history_rank.setVisibility(View.GONE);
         scv_history_normal.setVisibility(View.GONE);
-        //scv_history_cobalt.setVisibility(View.GONE);
+        scv_history_cobalt.setVisibility(View.GONE);
         switch (selected_info) {
             case userinfo:
                 switch (selected_match) {
@@ -286,7 +286,7 @@ public class act_user extends AppCompatActivity {
                         scv_info_normal.setVisibility(View.VISIBLE);
                         break;
                     case cobalt:
-                        //scv_info_cobalt.setVisibility(View.VISIBLE);
+                        scv_info_cobalt.setVisibility(View.VISIBLE);
                         break;
                 }
                 break;
@@ -299,7 +299,7 @@ public class act_user extends AppCompatActivity {
                         scv_history_normal.setVisibility(View.VISIBLE);
                         break;
                     case cobalt:
-                        //scv_history_cobalt.setVisibility(View.VISIBLE);
+                        scv_history_cobalt.setVisibility(View.VISIBLE);
                         break;
                 }
                 break;

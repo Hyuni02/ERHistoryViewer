@@ -4,6 +4,7 @@ package com.example.erhistoryviewer;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.text.BoringLayout;
 import android.util.Log;
 import android.os.Handler;
@@ -261,7 +262,12 @@ public class thd_Request extends Thread {
         Log.d("MMRS", stringBuilder.toString());
     }
     private void SetInfo(int seasonId){
+//        act_user.img_tier.setImageDrawable();
+    }
+    private Drawable MMRtoTier(int mmr){
 
+        Log.d("Error", "Can't Find Tier " + mmr);
+        return null;
     }
 
     List<String> lst_Season = new ArrayList<>();
@@ -290,6 +296,7 @@ public class thd_Request extends Thread {
                 data_Season s = re_season.data.get(re_season.data.size() - 1 - position);
                 selected_seasonId = s.seasonID;
                 PrintMMRS(selected_seasonId);
+                SetInfo(selected_seasonId);
                 Log.d("Season Name", s.seasonName + "/" + s.seasonID);
             }
 

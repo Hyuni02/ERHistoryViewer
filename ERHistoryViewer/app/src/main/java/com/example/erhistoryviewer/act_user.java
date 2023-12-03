@@ -5,8 +5,6 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,7 +22,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.LineData;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.opencsv.CSVReader;
@@ -53,24 +50,16 @@ public class act_user extends AppCompatActivity {
     Spinner spn_seasons;
     static RequestQueue requestQueue;
 
-    RE_Season re_season = null;
-    RE_UserStats re_userstats = null;
-
-
-
     TabLayout tabLayout_info;
     TabLayout tabLayout_match;
 
     List<charIndex> CharacterIndex = new ArrayList<>();
-    List<String> lst_Season = new ArrayList<>();
-
-    int selected_seasonId = -1;
     String userNum = "";
-    public enum Selected_Info {userinfo, matchhistory;}
+    public enum Selected_Info {userinfo, matchhistory}
 
     public Selected_Info selected_info = Selected_Info.userinfo;
 
-    public enum Selected_Match {rank, casual, cobalt;}
+    public enum Selected_Match {rank, casual, cobalt}
 
     public Selected_Match selected_match = Selected_Match.rank;
 
@@ -163,44 +152,12 @@ public class act_user extends AppCompatActivity {
         mmrGraph = findViewById(R.id.grp);
     }
 
-    private void SetSpnnierSeason() {
-        for (int i = re_season.data.size() - 1; i >= 0; i--) {
-            lst_Season.add(re_season.data.get(i).seasonName);
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                getApplicationContext(),
-                android.R.layout.simple_spinner_item,
-                lst_Season);
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spn_seasons.setAdapter(adapter);
-
-        spn_seasons.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                data_Season s = re_season.data.get(re_season.data.size() - 1 - position);
-                selected_seasonId = s.seasonID;
-                Log.d("Season Name", s.seasonName + "/" + s.seasonID);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
-
-
     public String CharacterCodetoName(int code) {
         return CharacterIndex.get(code - 1).name_E;
     }
 
     private void SetOnClick() {
-        btn_search.setOnClickListener(v -> {
-            Request_UserNum();
-        });
+        btn_search.setOnClickListener(v -> Request_UserNum());
 
         btn_tolobby.setOnClickListener(v -> {
             Intent intent = new Intent(this, act_lobby.class);
@@ -322,9 +279,7 @@ public class act_user extends AppCompatActivity {
         StringRequest request = new StringRequest(
                 Request.Method.GET,
                 "https://open-api.bser.io/v1/user/nickname?query=" + userName,
-                response -> {
-                    Response_UserNum(response);
-                },
+                response -> Response_UserNum(response),
                 error -> {
                     println(error.toString());
                     Log.e("UserNum", error.toString());

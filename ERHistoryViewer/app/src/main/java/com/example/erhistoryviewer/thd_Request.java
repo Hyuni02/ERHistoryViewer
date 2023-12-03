@@ -8,10 +8,15 @@ import android.text.BoringLayout;
 import android.util.Log;
 import android.os.Handler;
 import android.view.GestureDetector;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -104,8 +109,14 @@ public class thd_Request extends Thread {
                     }
                 }
             }
-
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    SetSpnnierSeason();
+                }
+            });
             PrintMMRS(lastPlaySeasonId);
+
 
             Log.d("done", "done");
         } catch (InterruptedException e) {
@@ -146,6 +157,7 @@ public class thd_Request extends Thread {
     }
 
     List<GraphPoint> points = new ArrayList<>();
+    ArrayList<UserGame> lst_UserGames = new ArrayList<>();
 
     private int Request_UserGame() {
         Log.d("Request", "UserGame");
@@ -157,6 +169,7 @@ public class thd_Request extends Thread {
 
         for (int i = 0; i < userGame.userGames.size(); i++) {
             UserGame game = userGame.userGames.get(i);
+            lst_UserGames.add(game);
             switch (game.matchingMode) {
                 //랭크게임
                 case 3:
@@ -184,6 +197,7 @@ public class thd_Request extends Thread {
                 //코발트
                 case 6:
                     //todo 코발트 대전기록 표시
+                    game.seasonId = GetNormalSeasonId(game.startDtm);
 
                     break;
             }
@@ -191,7 +205,10 @@ public class thd_Request extends Thread {
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < userGame.userGames.size(); i++) {
-            stringBuilder.append(userGame.userGames.get(i).gameId + "\n");
+            stringBuilder.append(userGame.userGames.get(i).gameId
+                    + " (" + userGame.userGames.get(i).matchingMode + ") "
+                    + userGame.userGames.get(i).startDtm
+                    + "\n");
         }
         Log.d("UserGame", stringBuilder.toString());
         level = Math.max(userGame.userGames.get(0).accountLevel, level);
@@ -208,29 +225,85 @@ public class thd_Request extends Thread {
     }
 
     LineData lineData;
-
+    ArrayList<String> Dates = new ArrayList<>();
     private void PrintMMRS(int seasonId) {
-        //todo 시즌별로 그래프 자르기
-
-
-        //mmr획득량을 그래프로 표시
         lineData = new LineData();
         ArrayList<Entry> chart = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
 
         for (int i = points.size() - 1; i >= 0; i--) {
-            chart.add(new Entry((points.size() - points.indexOf(points.get(i)) - 1), points.get(i).getMMR()));
-            stringBuilder.append((points.size() - points.indexOf(points.get(i)) - 1) + " : " + points.get(i).getDate() + "(" + points.get(i).getSeasoonId() + ") : " + points.get(i).getMMR() + "\n");
+            if (points.get(i).getSeasoonId() == seasonId) {
+                chart.add(new Entry((points.size() - points.indexOf(points.get(i)) - 1), points.get(i).getMMR()));
+                Dates.add(points.get(i).getDate().format(DateTimeFormatter.ofPattern("yy/MM/dd")));
+                stringBuilder.append((points.size() - points.indexOf(points.get(i)) - 1) + " : " + points.get(i).getDate() + "(" + points.get(i).getSeasoonId() + ") : " + points.get(i).getMMR() + "\n");
+            }
         }
 
         LineDataSet lineDataSet = new LineDataSet(chart, "MMR");
         lineDataSet.setColor(Color.RED);
         lineData.addDataSet(lineDataSet);
+
+        //그래프 설정
+        XAxis x = act_user.mmrGraph.getXAxis();
+        x.setPosition(XAxis.XAxisPosition.BOTTOM);
+        act_user.mmrGraph.getAxisRight().setEnabled(false);
+        act_user.mmrGraph.getDescription().setEnabled(false);
+        act_user.mmrGraph.setTouchEnabled(true);
+        act_user.mmrGraph.setDragXEnabled(true);
+        act_user.mmrGraph.setVisibleXRange(1,6);
+        act_user.mmrGraph.moveViewToX(lineDataSet.getEntryCount());
+
+        //그래프 적용
         act_user.mmrGraph.setData(lineData);
-        ;
+        x.setValueFormatter(new IndexAxisValueFormatter(Dates));
         act_user.mmrGraph.invalidate();
-        act_user.mmrGraph.setTouchEnabled(false);
         Log.d("MMRS", stringBuilder.toString());
+    }
+
+    List<String> lst_Season = new ArrayList<>();
+    int selected_seasonId = -1;
+
+    private void SetSpnnierSeason() {
+        lst_Season.clear();
+        //플레이 기록이 있는 시즌만 추가하기
+        for (UserGame game : lst_UserGames) {
+            if (!lst_Season.contains(SeasonIdtoName(game.seasonId))) {
+                lst_Season.add(SeasonIdtoName(game.seasonId));
+            }
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                act_user.getApplicationContext(),
+                android.R.layout.simple_spinner_item,
+                lst_Season);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        act_user.spn_seasons.setAdapter(adapter);
+
+        act_user.spn_seasons.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                data_Season s = re_season.data.get(re_season.data.size() - 1 - position);
+                selected_seasonId = s.seasonID;
+                PrintMMRS(selected_seasonId);
+                Log.d("Season Name", s.seasonName + "/" + s.seasonID);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private String SeasonIdtoName(int seasonId) {
+        for (data_Season season : re_season.data) {
+            if (season.seasonID == seasonId) {
+                return season.seasonName;
+            }
+        }
+        Log.e("Error", "Can't find SeasonName " + seasonId);
+        return null;
     }
 
     private int GetNormalSeasonId(String date) {
@@ -239,7 +312,7 @@ public class thd_Request extends Thread {
             LocalDate date_seasonEnd = LocalDate.parse(season.seasonEnd.split(" ")[0]);
             LocalDate date_seasonStart = LocalDate.parse(season.seasonStart.split(" ")[0]);
             LocalDate date_game = LocalDate.parse(date.split("T")[0]);
-            if (date_seasonEnd.isAfter(date_game)) {
+            if (date_seasonEnd.isAfter(date_game) || date_seasonEnd.isEqual(date_game)) {
                 if (date_seasonStart.isBefore(date_game)) {
                     Log.d("SeasonId Found", date.split("T")[0] + "의 seasonId : " + season.seasonID);
                     return season.seasonID;

@@ -112,7 +112,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="36dp"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tablayout_info"
@@ -184,8 +185,8 @@
                                 android:id="@+id/img_tier"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginRight="10dp"
                                 android:layout_weight="1"
-                                android:src="@tools:sample/avatars"
                                 app:srcCompat="@drawable/img_eternity" />
 
                             <LinearLayout
@@ -205,6 +206,12 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="티어 - 0 RP" />
+
+                                <TextView
+                                    android:id="@+id/txt_rank"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="순위 0위" />
                             </LinearLayout>
                         </LinearLayout>
 
@@ -240,6 +247,126 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:layout_margin="15dp"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/img_normal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dp"
+                                android:layout_weight="1"
+                                app:srcCompat="@drawable/img_normal" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/txt_gameCount"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="게임 수 0" />
+
+                                <TextView
+                                    android:id="@+id/txt_avgRank"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="평균 순위 0위" />
+
+                                <TextView
+                                    android:id="@+id/txt_winRate"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="승률 : 00%" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/textView15"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="info normal" />
+
+                    <TextView
+                        android:id="@+id/textView16"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="info normal2" />
+                </LinearLayout>
+            </ScrollView>
+
+            <ScrollView
+                android:id="@+id/scv_info_cobalt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/content_info_cobalt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:layout_margin="15dp"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/img_cobalt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dp"
+                                android:layout_weight="1"
+                                app:srcCompat="@drawable/img_cobalt" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/txt_gameCount_cobalt"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="게임 수 0" />
+
+                                <TextView
+                                    android:id="@+id/txt_avgDmg"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="평균 딜량 0" />
+
+                                <TextView
+                                    android:id="@+id/txt_winRate_cobalt"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="승률 : 00%" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </FrameLayout>
 
                     <TextView
                         android:id="@+id/textView10"
@@ -279,7 +406,7 @@
                 android:id="@+id/scv_history_normal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone" >
+                android:visibility="gone">
 
                 <LinearLayout
                     android:id="@+id/content_history_normal"
@@ -289,6 +416,26 @@
 
                     <TextView
                         android:id="@+id/textView12"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="history normal" />
+                </LinearLayout>
+            </ScrollView>
+
+            <ScrollView
+                android:id="@+id/scv_history_cobalt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" >
+
+                <LinearLayout
+                    android:id="@+id/content_history_cobalt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView13"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="history normal" />

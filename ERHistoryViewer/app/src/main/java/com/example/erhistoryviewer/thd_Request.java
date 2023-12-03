@@ -116,6 +116,7 @@ public class thd_Request extends Thread {
                 }
             });
             PrintMMRS(lastPlaySeasonId);
+            SetInfo(lastPlaySeasonId);
 
 
             Log.d("done", "done");
@@ -258,6 +259,9 @@ public class thd_Request extends Thread {
         x.setValueFormatter(new IndexAxisValueFormatter(Dates));
         act_user.mmrGraph.invalidate();
         Log.d("MMRS", stringBuilder.toString());
+    }
+    private void SetInfo(int seasonId){
+
     }
 
     List<String> lst_Season = new ArrayList<>();

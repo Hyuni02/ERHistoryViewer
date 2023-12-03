@@ -42,9 +42,9 @@ public class act_user extends AppCompatActivity {
     EditText edt_userName;
     ImageButton btn_tolobby;
     ImageButton btn_search;
+    ImageView img_refresh;
     TextView txt_nickname;
     TextView txt_level;
-    ImageView img_tier;
     ImageView img_mostcharacter;
 
     Spinner spn_seasons;
@@ -55,6 +55,7 @@ public class act_user extends AppCompatActivity {
 
     List<charIndex> CharacterIndex = new ArrayList<>();
     String userNum = "";
+
     public enum Selected_Info {userinfo, matchhistory}
 
     public Selected_Info selected_info = Selected_Info.userinfo;
@@ -79,7 +80,19 @@ public class act_user extends AppCompatActivity {
     LinearLayout content_history_normal;
     LinearLayout content_history_cobalt;
 
+    ImageView img_tier;
+    TextView txt_mmr;
+    TextView txt_tier;
+    TextView txt_rank;
+    TextView txt_gameCount;
+    TextView txt_avgRank;
+    TextView txt_winRate;
+    TextView txt_gameCount_cobalt;
+    TextView txt_avgDmg;
+    TextView txt_winRate_cobalt;
+
     LineChart mmrGraph;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,9 +136,10 @@ public class act_user extends AppCompatActivity {
         }
     }
 
-    private void SetViews(){
+    private void SetViews() {
         btn_tolobby = findViewById(R.id.btn_tolobby);
         btn_search = findViewById(R.id.btn_search);
+        img_refresh = findViewById(R.id.img_refresh);
         edt_userName = findViewById(R.id.edt_userName);
         img_mostcharacter = findViewById(R.id.img_mostcharacter);
         img_tier = findViewById(R.id.img_refresh);
@@ -137,19 +151,30 @@ public class act_user extends AppCompatActivity {
         //스크롤뷰
         scv_info_rank = findViewById(R.id.scv_info_rank);
         scv_info_normal = findViewById(R.id.scv_info_normal);
-        //scv_info_cobalt = findViewById(R.id.scv_info_cobalt); //todo 코발트 UI추가
+        scv_info_cobalt = findViewById(R.id.scv_info_cobalt); //todo 코발트 UI추가
         scv_history_rank = findViewById(R.id.scv_history_rank);
         scv_history_normal = findViewById(R.id.scv_history_normal);
-        //scv_history_cobalt = findViewById(R.id.scv_history_cobalt);
+        scv_history_cobalt = findViewById(R.id.scv_history_cobalt);
         //컨텐츠
         content_info_rank = findViewById(R.id.content_info_rank);
         content_info_normal = findViewById(R.id.content_info_normal);
-        //content_info_cobalt = findViewById(R.id.content_info_cobalt);
+        content_info_cobalt = findViewById(R.id.content_info_cobalt);
         content_history_rank = findViewById(R.id.content_history_rank);
         content_history_normal = findViewById(R.id.content_history_normal);
-        //content_history_cobalt = findViewById(R.id.content_history_cobalt);
+        content_history_cobalt = findViewById(R.id.content_history_cobalt);
         //그래프
         mmrGraph = findViewById(R.id.grp);
+
+        img_tier = findViewById(R.id.img_tier);
+        txt_mmr = findViewById(R.id.txt_mmr);
+        txt_tier = findViewById(R.id.txt_tier);
+        txt_rank = findViewById(R.id.txt_rank);
+        txt_gameCount = findViewById(R.id.txt_gameCount);
+        txt_avgRank = findViewById(R.id.txt_avgRank);
+        txt_winRate = findViewById(R.id.txt_winRate);
+        txt_gameCount_cobalt = findViewById(R.id.txt_gameCount_cobalt);
+        txt_avgDmg = findViewById(R.id.txt_avgDmg);
+        txt_winRate_cobalt = findViewById(R.id.txt_winRate_cobalt);
     }
 
     public String CharacterCodetoName(int code) {
@@ -158,6 +183,14 @@ public class act_user extends AppCompatActivity {
 
     private void SetOnClick() {
         btn_search.setOnClickListener(v -> Request_UserNum());
+
+        img_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edt_userName.setText(txt_nickname.getText());
+                Request_UserNum();
+            }
+        });
 
         btn_tolobby.setOnClickListener(v -> {
             Intent intent = new Intent(this, act_lobby.class);
@@ -215,6 +248,7 @@ public class act_user extends AppCompatActivity {
         Log.d("Change Tab Info", "Change Tab to " + tab);
         ChangeScrollView();
     }
+
     private void ChangeTab_Match(int index) {
         String tab = "";
         switch (index) {
@@ -235,16 +269,16 @@ public class act_user extends AppCompatActivity {
         ChangeScrollView();
     }
 
-    private void ChangeScrollView(){
+    private void ChangeScrollView() {
         scv_info_rank.setVisibility(View.GONE);
         scv_info_normal.setVisibility(View.GONE);
         //scv_info_cobalt.setVisibility(View.GONE);
         scv_history_rank.setVisibility(View.GONE);
         scv_history_normal.setVisibility(View.GONE);
         //scv_history_cobalt.setVisibility(View.GONE);
-        switch (selected_info){
+        switch (selected_info) {
             case userinfo:
-                switch (selected_match){
+                switch (selected_match) {
                     case rank:
                         scv_info_rank.setVisibility(View.VISIBLE);
                         break;
@@ -257,7 +291,7 @@ public class act_user extends AppCompatActivity {
                 }
                 break;
             case matchhistory:
-                switch (selected_match){
+                switch (selected_match) {
                     case rank:
                         scv_history_rank.setVisibility(View.VISIBLE);
                         break;

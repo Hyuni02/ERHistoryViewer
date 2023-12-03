@@ -16,14 +16,13 @@ def ExportJson(js, fileName="temp", printjs=False):
 # ExportJson(er.GetUserGames(er.GetUserNum("ErrorCode02")))
 # ExportJson(er.GetGameData("LoadingTip"))
 
-input_username = '섹시뽀짝김용주'
+input_username = '한동그라미'
 usernum = er.GetUserNum(input_username)
 season = er.GetSeason()
 ExportJson(season, "./jsons/season")
 
 lastseason = season["data"][len(season["data"]) - 1]["seasonID"]
-# userstat = er.GetUserStats(usernum, lastseason)
-userstat = er.GetUserStats(usernum, 13)
+userstat = er.GetUserStats(usernum, lastseason)
 username = userstat["userStats"][0]["nickname"]
 
 ExportJson(userstat, f"./jsons/userstat_{username}_{lastseason}")

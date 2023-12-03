@@ -54,6 +54,7 @@ public class act_user extends AppCompatActivity {
     TabLayout tabLayout_match;
 
     List<charIndex> CharacterIndex = new ArrayList<>();
+    List<tierIndex> TierIndex = new ArrayList<>();
     String userNum = "";
 
     public enum Selected_Info {userinfo, matchhistory}
@@ -122,8 +123,8 @@ public class act_user extends AppCompatActivity {
         userNum = getIntent().getStringExtra("userNum");
 
         //캐릭터ID 파일 읽기
+        AssetManager assetManager = this.getAssets();
         try {
-            AssetManager assetManager = this.getAssets();
             InputStream inputStream = assetManager.open("characterindex.csv");
             CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, "EUC-KR"));
             List<String[]> allContent = csvReader.readAll();
@@ -132,6 +133,20 @@ public class act_user extends AppCompatActivity {
                 CharacterIndex.add(new charIndex(content[0], content[1], content[2]));
             }
         } catch (IOException | CsvException e) {
+            e.printStackTrace();
+        }
+
+        //점수별 티어 파일 읽기
+        try{
+            InputStream inputStream = assetManager.open("tier.csv");
+            CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, "EUC-KR"));
+            List<String[]> allContent = csvReader.readAll();
+            for (String[] content : allContent) {
+                Log.d("Tier - MMR", content[0] + "\t\t" + content[1] + "\t\t" + content[2]);
+                TierIndex.add(new tierIndex(content[0], Integer.parseInt(content[1]), Integer.parseInt(content[2])));
+            }
+        }
+        catch (IOException | CsvException e) {
             e.printStackTrace();
         }
     }

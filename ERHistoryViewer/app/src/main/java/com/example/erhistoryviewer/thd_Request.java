@@ -4,11 +4,8 @@ package com.example.erhistoryviewer;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.text.BoringLayout;
 import android.util.Log;
 import android.os.Handler;
-import android.view.GestureDetector;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -23,18 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class thd_Request extends Thread {
     private String thdName = "";
@@ -262,10 +251,63 @@ public class thd_Request extends Thread {
         Log.d("MMRS", stringBuilder.toString());
     }
     private void SetInfo(int seasonId){
-//        act_user.img_tier.setImageDrawable();
+//        act_user.img_tier.setImageDrawable(MMRtoTier());
     }
-    private Drawable MMRtoTier(int mmr){
-
+    private rankInfo MMRtoTier(int mmr, int rank){
+        for(tierIndex tier : act_user.TierIndex){
+            if(tier.top <= mmr && tier.bottom >= mmr){
+                rankInfo rankInfo = new rankInfo();
+                rankInfo.name = tier.tierName;
+                switch (tier.tierName){
+                    case "아이언IV":
+                    case "아이언III":
+                    case "아이언II":
+                    case "아이언I":
+                        rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_iron);
+                        break;
+                    case "브론즈IV":
+                    case "브론즈III":
+                    case "브론즈II":
+                    case "브론즈I":
+                        rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_bronze);
+                        break;
+                    case "실버IV":
+                    case "실버III":
+                    case "실버II":
+                    case "실버I":
+                        rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_silver);
+                        break;
+                    case "골드IV":
+                    case "골드III":
+                    case "골드II":
+                    case "골드I":
+                        rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_gold);
+                        break;
+                    case "플레티넘IV":
+                    case "플레티넘III":
+                    case "플레티넘II":
+                    case "플레티넘I":
+                        rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_platinum);
+                        break;
+                    case "다이아몬드IV":
+                    case "다이아몬드III":
+                    case "다이아몬드II":
+                    case "다이아몬드I":
+                        rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_diamond);
+                        break;
+                    case "미스릴":
+                        rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_mythril);
+                        break;
+                }
+                if(rank <= 700){
+                    rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_demigod);
+                }
+                if(rank <= 200){
+                    rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_eternity);
+                }
+                return rankInfo;
+            }
+        }
         Log.d("Error", "Can't Find Tier " + mmr);
         return null;
     }

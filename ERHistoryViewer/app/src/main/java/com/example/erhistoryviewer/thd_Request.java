@@ -41,6 +41,7 @@ public class thd_Request extends Thread {
 
     act_user act_user;
     Handler handler = new Handler();
+    List<RE_UserStats> lst_UserStats = new ArrayList<>();
 
     public thd_Request(String thdname, act_user act_user) {
         // 초기화 작업
@@ -63,6 +64,7 @@ public class thd_Request extends Thread {
 
             re_season = Request_Season();
             Thread.sleep(1000);
+
 
             //유저 게임 기록 1개 불러오기
             lastPlaySeasonId = Request_UserGame();
@@ -312,22 +314,24 @@ public class thd_Request extends Thread {
         return null;
     }
 
-    List<String> lst_Season = new ArrayList<>();
+    List<Integer> lst_SeasonId = new ArrayList<>();
+    List<String> lst_SeasonName = new ArrayList<>();
     int selected_seasonId = -1;
 
     private void SetSpnnierSeason() {
-        lst_Season.clear();
+        lst_SeasonId.clear();
         //플레이 기록이 있는 시즌만 추가하기
         for (UserGame game : lst_UserGames) {
-            if (!lst_Season.contains(SeasonIdtoName(game.seasonId))) {
-                lst_Season.add(SeasonIdtoName(game.seasonId));
+            if (!lst_SeasonId.contains(game.seasonId)) {
+                lst_SeasonId.add(game.seasonId);
+                lst_SeasonName.add(SeasonIdtoName(game.seasonId));
             }
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 act_user.getApplicationContext(),
                 android.R.layout.simple_spinner_item,
-                lst_Season);
+                lst_SeasonName);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         act_user.spn_seasons.setAdapter(adapter);

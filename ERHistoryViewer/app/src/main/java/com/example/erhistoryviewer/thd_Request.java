@@ -2,7 +2,6 @@ package com.example.erhistoryviewer;
 
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -17,17 +16,10 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.LongBinaryOperator;
 
 public class thd_Request extends Thread {
     private String thdName = "";
@@ -182,7 +174,6 @@ public class thd_Request extends Thread {
     Bitmap bitmap;
 
     private Drawable Get_MostCharacterImage(int characterCode) {
-        Log.d("Request", "MostCharacterImage");
         String charName = act_user.CharacterCodetoName(characterCode).toLowerCase();
         String skinCode = "S000"; //todo 가장 많이 사용한 스킨 찾기 구현
         int drawableResourceId = act_user.getResources().getIdentifier(charName, "drawable", act_user.getPackageName());
@@ -274,12 +265,13 @@ public class thd_Request extends Thread {
     }
 
     LineData lineData;
-    ArrayList<String> Dates = new ArrayList<>();
+    ArrayList<String> Dates;
 
     private void PrintMMRS(int seasonId) {
         lineData = new LineData();
         ArrayList<Entry> chart = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
+        Dates = new ArrayList<>();
 
         for (int i = points.size() - 1; i >= 0; i--) {
             if (points.get(i).getSeasoonId() == seasonId) {
@@ -300,7 +292,7 @@ public class thd_Request extends Thread {
         act_user.mmrGraph.getDescription().setEnabled(false);
         act_user.mmrGraph.setTouchEnabled(true);
         act_user.mmrGraph.setDragXEnabled(true);
-        act_user.mmrGraph.setVisibleXRange(1, 6);
+        act_user.mmrGraph.setVisibleXRange(1, 5);
         act_user.mmrGraph.moveViewToX(lineDataSet.getEntryCount());
 
         //그래프 적용
@@ -310,20 +302,41 @@ public class thd_Request extends Thread {
         Log.d("MMRS", stringBuilder.toString());
     }
 
-    private void SetInfo(int seasonId) {
+    private void SetInfo_main(int seasonId) {
         act_user.txt_level.setText("LV " + level);
         act_user.txt_nickname.setText(userName);
         if (lst_UserStats.get(lst_SeasonId.indexOf(seasonId)).code == 404) {
             //todo 정보 없음 사진 표시
+            act_user.img_mostcharacter.setImageDrawable(act_user.getResources().getDrawable(R.drawable.mostcharacter));
+            Log.d("Set Info Main", "No data" + SeasonIdtoName(seasonId) + "(" + seasonId + ")");
+        } else {
+            act_user.img_mostcharacter.setImageDrawable(Get_MostCharacterImage(GetUserStatsbySeasonId(seasonId).characterStats.get(0).characterCode));
+            Log.d("Set Info Main", "Lv " + level + "\nNickname : " + userName + "\nMostCharacter : " + act_user.CharacterCodetoName(GetUserStatsbySeasonId(seasonId).characterStats.get(0).characterCode) + "(" + lst_UserStats.get(lst_SeasonId.indexOf(seasonId)).userStats.get(0).characterStats.get(0).characterCode + ")");
         }
-        else {
-            act_user.img_mostcharacter.setImageDrawable(Get_MostCharacterImage(lst_UserStats.get(lst_SeasonId.indexOf(seasonId)).userStats.get(0).characterStats.get(0).characterCode));
-        }
+    }
+
+    private void SetInfo_Match(int seasonId) {
+        //랭크
+        int mmr = GetUserStatsbySeasonId(seasonId).mmr;
+        int rank = GetUserStatsbySeasonId(seasonId).rank;
+        Log.d("MMR Rank", "MMR : " + mmr + " Rank : " + rank);
+        rankInfo rankInfo = MMRtoTier(mmr, rank);
+        act_user.img_tier.setImageDrawable(rankInfo.image);
+        act_user.txt_mmr.setText(GetUserStatsbySeasonId(seasonId).mmr + "RP");
+        act_user.txt_tier.setText("티어 - " + rankInfo.name);
+        act_user.txt_rank.setText("순위 " + GetUserStatsbySeasonId(seasonId).rank + "위");
+        //일반
+
+        //코발트
+    }
+
+    private userStats GetUserStatsbySeasonId(int seasonId){
+        return lst_UserStats.get(lst_SeasonId.indexOf(seasonId)).userStats.get(0);
     }
 
     private rankInfo MMRtoTier(int mmr, int rank) {
         for (tierIndex tier : act_user.TierIndex) {
-            if (tier.top <= mmr && tier.bottom >= mmr) {
+            if (tier.top >= mmr && tier.bottom <= mmr) {
                 rankInfo rankInfo = new rankInfo();
                 rankInfo.name = tier.tierName;
                 switch (tier.tierName) {
@@ -410,9 +423,9 @@ public class thd_Request extends Thread {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 data_Season s = re_season.data.get(re_season.data.size() - 1 - position);
                 selected_seasonId = s.seasonID;
-//                PrintMMRS(selected_seasonId);
-
-                SetInfo(selected_seasonId);
+                PrintMMRS(selected_seasonId); //todo 다른 시즌 갔다 돌아오면 그래프 쪽에서 문제 발생
+                SetInfo_main(selected_seasonId);
+                SetInfo_Match(selected_seasonId);
                 Log.d("Season Name", s.seasonName + " / " + s.seasonID);
             }
 

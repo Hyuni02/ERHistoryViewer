@@ -4,8 +4,8 @@ import time
 import json
 import Debugger as deb
 
-usernum = er.GetUserNum("errorcode02")
-userstat = er.GetUserStats(usernum, 20)
+usernum = er.GetUserNum("섹시뽀짝김용주")
+userstat = er.GetUserStats(usernum, 19)
 
 deb.ExportJson(userstat, "season20stats")
 

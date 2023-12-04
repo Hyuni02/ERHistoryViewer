@@ -1,0 +1,43 @@
+{
+	"code": 200,
+	"message": "Success",
+	"userStats": [
+		{
+			"seasonId": 21,
+			"userNum": 224287,
+			"matchingMode": 3,
+			"matchingTeamMode": 3,
+			"mmr": 6721,
+			"nickname": "\uc601\ub9cc",
+			"rank": 1,
+			"rankSize": 111169,
+			"totalGames": 111,
+			"totalWins": 27,
+			"totalTeamKills": 1112,
+			"totalDeaths": 178,
+			"escapeCount": 3,
+			"rankPercent": 0.0,
+			"averageRank": 3.36,
+			"averageKills": 4.68,
+			"averageAssistants": 4.12,
+			"averageHunts": 35.93,
+			"top1": 0.24,
+			"top2": 0.4,
+			"top3": 0.59,
+			"top5": 0.79,
+			"top7": 1.0,
+			"characterStats": [
+				{
+					"characterCode": 48,
+					"totalGames": 111,
+					"usages": 111,
+					"maxKillings": 16,
+					"top3": 66,
+					"wins": 27,
+					"top3Rate": 1,
+					"averageRank": 3
+				}
+			]
+		}
+	]
+}

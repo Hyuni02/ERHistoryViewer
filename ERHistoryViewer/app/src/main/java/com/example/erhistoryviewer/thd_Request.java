@@ -6,9 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.os.Handler;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -20,16 +17,17 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 public class thd_Request extends Thread {
-    private String thdName = "";
+    private final String thdName;
 
     int sleeptime = 1000;
     private int next = 0;
     private int level = 0;
     private int mostCharacter = 0;
     private String userName = "";
-    private int lastPlaySeasonId = -1;
+    private int currentSeasonId = -1;
     String userNum = "";
     Converter converter;
     Requester requester;
@@ -38,7 +36,10 @@ public class thd_Request extends Thread {
 
     act_user act_user;
     Handler handler = new Handler();
-    List<RE_UserStats> lst_UserStats = new ArrayList<>();
+    //    List<RE_UserStats> lst_UserStats = new ArrayList<>();
+    RE_UserStats userStat_rank;
+    userStats userStat_normal;
+    userStats userStat_cobalt;
 
     public thd_Request(String thdname, act_user act_user) {
         // 초기화 작업
@@ -60,109 +61,67 @@ public class thd_Request extends Thread {
             Thread.sleep(sleeptime);
 
             re_season = Request_Season();
+            for (data_Season data : re_season.data) {
+                if (data.isCurrent == 1) {
+                    currentSeasonId = data.seasonID;
+                    Log.d("Current Season", data.seasonName + "(" + currentSeasonId + ")");
+                    break;
+                }
+            }
             Thread.sleep(sleeptime);
 
             //유저 게임 기록 많이 받아오기
             for (int i = 0; i < 10; i++) {
                 Thread.sleep(sleeptime);
-                Request_UserGame();
+                int seasonIdfromGame = Request_UserGame();
                 Log.d("next", Integer.toString(next));
                 if (next == 0) {
                     Log.d("Break", "No More Games");
                     break;
                 }
-            }
-            SetLst_Season();
-            for (Integer seasonId : lst_SeasonId) {
-                Request_UserStats(seasonId);
-            }
-
-
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    SetSpnnierSeason();
+                if (seasonIdfromGame < currentSeasonId) {
+                    Log.d("Break", "Not Current Season Data");
+                    break;
                 }
-            });
+            }
 
-            /*
-
-            //유저 게임 기록 1개 불러오기
-            lastPlaySeasonId = Request_UserGame();
+            Request_UserStats(currentSeasonId);
             Thread.sleep(sleeptime);
-            Log.d("next", Integer.toString(next));
+            Request_UserStats(0);
 
-            //첫번째 게임 기록의 시즌을 가져와서 스탯 검색
-            Request_UserStats();
-            Log.d("Last Play Season", Integer.toString(lastPlaySeasonId));
-            Log.d("Level", Integer.toString(level));
-            Log.d("NickName", userName);
-            Log.d("Most Character", Integer.toString(mostCharacter));
-            Thread.sleep(sleeptime);
-            Request_MostCharacterImage();
-            //UI스래드 접근
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    act_user.txt_level.setText("LV " + level);
-                    act_user.txt_nickname.setText(userName);
-                    act_user.img_mostcharacter.setImageBitmap(bitmap);
+                    SetInfo_main(currentSeasonId);
+                    SetInfo_Match();
                 }
             });
 
-            //next가 있으면 5회 || next가 없을 때까지 대전기록 가져오기
-            if (next != 0) {
-                for (int i = 0; i < 10; i++) {
-                    Thread.sleep(sleeptime);
-                    Request_UserGame();
-                    Log.d("next", Integer.toString(next));
-                    if (next == 0) {
-                        Log.d("Break", "No More Games");
-                        break;
-                    }
-                }
-            }
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    SetSpnnierSeason();
-                }
-            });
-            PrintMMRS(lastPlaySeasonId);
-            SetInfo(lastPlaySeasonId);
 
-            */
             StringBuilder sb = new StringBuilder();
-            for (UserGame userGame : lst_UserGames) {
+            sb = new StringBuilder();
+            for (UserGame userGame : lst_UserGames_rank) {
                 sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
             }
-            Log.d("Games", sb.toString());
+            Log.d("Games_rank", sb.toString());
 
             sb = new StringBuilder();
-            for (String seasonName : lst_SeasonName) {
-                sb.append(seasonName + "\n");
+            for (UserGame userGame : lst_UserGames_normal) {
+                sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
             }
-            Log.d("Season Name", sb.toString());
+            Log.d("Games_normal", sb.toString());
 
             sb = new StringBuilder();
-            for (Integer seasonId : lst_SeasonId) {
-                sb.append(seasonId + "\n");
+            for (UserGame userGame : lst_UserGames_cobalt) {
+                sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
             }
-            Log.d("Season Id", sb.toString());
+            Log.d("Games_cobalt", sb.toString());
 
             sb = new StringBuilder();
-            for (RE_UserStats userStats : lst_UserStats) {
-                sb.append(userStats.userStats.get(0).seasonId);
-                if (userStats.code == 404) {
-                    sb.append(" : no data\n");
-                } else {
-                    for (CharacterStats characterStats : userStats.userStats.get(0).characterStats) {
-                        sb.append(" : " + act_user.CharacterCodetoName(characterStats.characterCode));
-                    }
-                    sb.append("\n");
-                }
+            for (GraphPoint point : points) {
+                sb.append(point.getDate() + " : " + point.getMMR() + "\n");
             }
-            Log.d("UserStats", sb.toString());
+            Log.d("MMR", sb.toString());
 
             Log.d("done", "done");
         } catch (InterruptedException e) {
@@ -194,7 +153,9 @@ public class thd_Request extends Thread {
     }
 
     List<GraphPoint> points = new ArrayList<>();
-    ArrayList<UserGame> lst_UserGames = new ArrayList<>();
+    ArrayList<UserGame> lst_UserGames_rank = new ArrayList<>();
+    ArrayList<UserGame> lst_UserGames_normal = new ArrayList<>();
+    ArrayList<UserGame> lst_UserGames_cobalt = new ArrayList<>();
 
     private int Request_UserGame() {
         Log.d("Request", "UserGame");
@@ -206,7 +167,6 @@ public class thd_Request extends Thread {
 
         for (int i = 0; i < userGame.userGames.size(); i++) {
             UserGame game = userGame.userGames.get(i);
-            lst_UserGames.add(game);
             switch (game.matchingMode) {
                 //랭크게임
                 case 3:
@@ -220,6 +180,11 @@ public class thd_Request extends Thread {
                         points.add(point);
                         Log.d("Add MMR", date + " : " + game.mmrAfter);
                     }
+
+                    if (game.seasonId != currentSeasonId) {
+                        continue;
+                    }
+                    lst_UserGames_rank.add(game);
                     break;
                 //일반게임
                 case 2:
@@ -230,12 +195,22 @@ public class thd_Request extends Thread {
 
                     //todo (선택한 시즌에 맞춰 visible/gone)
 
+
+                    if (game.seasonId != currentSeasonId) {
+                        continue;
+                    }
+                    lst_UserGames_normal.add(game);
                     break;
                 //코발트
                 case 6:
                     //todo 코발트 대전기록 표시
                     game.seasonId = GetNormalSeasonId(game.startDtm);
 
+
+                    if (game.seasonId != currentSeasonId) {
+                        continue;
+                    }
+                    lst_UserGames_cobalt.add(game);
                     break;
             }
         }
@@ -264,14 +239,11 @@ public class thd_Request extends Thread {
         return null;
     }
 
-    LineData lineData;
-    ArrayList<String> Dates;
-
     private void PrintMMRS(int seasonId) {
-        lineData = new LineData();
+        LineData lineData = new LineData();
         ArrayList<Entry> chart = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
-        Dates = new ArrayList<>();
+        ArrayList<String> Dates = new ArrayList<>();
 
         for (int i = points.size() - 1; i >= 0; i--) {
             if (points.get(i).getSeasoonId() == seasonId) {
@@ -292,10 +264,11 @@ public class thd_Request extends Thread {
         act_user.mmrGraph.getDescription().setEnabled(false);
         act_user.mmrGraph.setTouchEnabled(true);
         act_user.mmrGraph.setDragXEnabled(true);
-        act_user.mmrGraph.setVisibleXRange(1, 5);
+        act_user.mmrGraph.setVisibleXRange(1, 6);
         act_user.mmrGraph.moveViewToX(lineDataSet.getEntryCount());
 
         //그래프 적용
+        //todo 다른 시즌 갔다 돌아오면 문제 발생
         act_user.mmrGraph.setData(lineData);
         x.setValueFormatter(new IndexAxisValueFormatter(Dates));
         act_user.mmrGraph.invalidate();
@@ -305,33 +278,75 @@ public class thd_Request extends Thread {
     private void SetInfo_main(int seasonId) {
         act_user.txt_level.setText("LV " + level);
         act_user.txt_nickname.setText(userName);
-        if (lst_UserStats.get(lst_SeasonId.indexOf(seasonId)).code == 404) {
-            //todo 정보 없음 사진 표시
+        if (userStat_rank.code == 404) {
             act_user.img_mostcharacter.setImageDrawable(act_user.getResources().getDrawable(R.drawable.mostcharacter));
             Log.d("Set Info Main", "No data" + SeasonIdtoName(seasonId) + "(" + seasonId + ")");
         } else {
-            act_user.img_mostcharacter.setImageDrawable(Get_MostCharacterImage(GetUserStatsbySeasonId(seasonId).characterStats.get(0).characterCode));
-            Log.d("Set Info Main", "Lv " + level + "\nNickname : " + userName + "\nMostCharacter : " + act_user.CharacterCodetoName(GetUserStatsbySeasonId(seasonId).characterStats.get(0).characterCode) + "(" + lst_UserStats.get(lst_SeasonId.indexOf(seasonId)).userStats.get(0).characterStats.get(0).characterCode + ")");
+            act_user.img_mostcharacter.setImageDrawable(Get_MostCharacterImage(userStat_rank.userStats.get(0).characterStats.get(0).characterCode));
+            Log.d("Set Info Main", "Lv " + level + "\nNickname : " + userName + "\nMostCharacter : " + act_user.CharacterCodetoName(userStat_rank.userStats.get(0).characterStats.get(0).characterCode) + "(" + userStat_rank.userStats.get(0).characterStats.get(0).characterCode + ")");
         }
     }
 
-    private void SetInfo_Match(int seasonId) {
+    private void SetInfo_Match() {
         //랭크
-        int mmr = GetUserStatsbySeasonId(seasonId).mmr;
-        int rank = GetUserStatsbySeasonId(seasonId).rank;
-        Log.d("MMR Rank", "MMR : " + mmr + " Rank : " + rank);
-        rankInfo rankInfo = MMRtoTier(mmr, rank);
-        act_user.img_tier.setImageDrawable(rankInfo.image);
-        act_user.txt_mmr.setText(GetUserStatsbySeasonId(seasonId).mmr + "RP");
-        act_user.txt_tier.setText("티어 - " + rankInfo.name);
-        act_user.txt_rank.setText("순위 " + GetUserStatsbySeasonId(seasonId).rank + "위");
+        if (userStat_rank.code != 404) {
+            int mmr = userStat_rank.userStats.get(0).mmr;
+            int rank = userStat_rank.userStats.get(0).rank;
+            Log.d("MMR Rank", "MMR : " + mmr + " Rank : " + rank);
+            rankInfo rankInfo = MMRtoTier(mmr, rank);
+            act_user.img_tier.setImageDrawable(rankInfo.image);
+            act_user.txt_mmr.setText(userStat_rank.userStats.get(0).mmr + "RP");
+            act_user.txt_tier.setText("티어 - " + rankInfo.name);
+            act_user.txt_rank.setText("순위 " + userStat_rank.userStats.get(0).rank + "위");
+        } else {
+            act_user.img_tier.setImageDrawable(act_user.getResources().getDrawable(R.drawable.img_unrank));
+            act_user.txt_mmr.setText("정보 없음");
+            act_user.txt_tier.setText("언랭크");
+            act_user.txt_rank.setText("");
+        }
         //일반
-
+        act_user.txt_gameCount.setText("게임 수 " + lst_UserGames_normal.size());
+        if(lst_UserGames_normal.size() == 0) {
+            act_user.txt_avgRank.setText("데이터 없음");
+            act_user.txt_winRate.setText("");
+        }
+        else{
+            act_user.txt_avgRank.setText("평균 순위 " + String.format("%.1f", GetAvgRank(lst_UserGames_normal)) + "위");
+            act_user.txt_winRate.setText("승률 " + String.format("%.1f", GetWinRate(lst_UserGames_normal)) + "%");
+        }
         //코발트
+        act_user.txt_gameCount_cobalt.setText("게임 수 " + lst_UserGames_cobalt.size());
+        if(lst_UserGames_cobalt.size() == 0){
+            act_user.txt_avgDmg.setText("데이터 없음");
+            act_user.txt_winRate_cobalt.setText("");
+        }
+        else {
+            act_user.txt_avgDmg.setText("평균 딜량 " + GetAvgDmg(lst_UserGames_cobalt));
+            act_user.txt_winRate_cobalt.setText("승률 " + GetWinRate(lst_UserGames_cobalt) + "%");
+        }
     }
 
-    private userStats GetUserStatsbySeasonId(int seasonId){
-        return lst_UserStats.get(lst_SeasonId.indexOf(seasonId)).userStats.get(0);
+    private float GetAvgRank(ArrayList<UserGame> lst) {
+        float total = 0;
+        for (UserGame game : lst) {
+            total += game.gameRank;
+        }
+        return total / lst.size();
+    }
+
+    private float GetWinRate(ArrayList<UserGame> lst) {
+        float total = 0;
+        for (UserGame game : lst) {
+            if (game.gameRank == 1) {
+                total++;
+            }
+        }
+        return total / lst.size() * 100;
+    }
+
+    private int GetAvgDmg(ArrayList<UserGame> lst) {
+        //todo 평균 딜량 구하기
+        return -1;
     }
 
     private rankInfo MMRtoTier(int mmr, int rank) {
@@ -381,9 +396,11 @@ public class thd_Request extends Thread {
                         break;
                 }
                 if (rank <= 700) {
+                    rankInfo.name = "데미갓";
                     rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_demigod);
                 }
                 if (rank <= 200) {
+                    rankInfo.name = "이터니티";
                     rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_eternity);
                 }
                 return rankInfo;
@@ -393,48 +410,20 @@ public class thd_Request extends Thread {
         return null;
     }
 
-    List<Integer> lst_SeasonId = new ArrayList<>();
-    List<String> lst_SeasonName = new ArrayList<>();
-    int selected_seasonId = -1;
-
-    private void SetLst_Season() {
-        lst_SeasonId.clear();
-        lst_SeasonName.clear();
-        //플레이 기록이 있는 시즌만 추가하기
-        for (UserGame game : lst_UserGames) {
-            if (!lst_SeasonId.contains(game.seasonId)) {
-                lst_SeasonId.add(game.seasonId);
-                lst_SeasonName.add(SeasonIdtoName(game.seasonId));
-            }
-        }
-    }
-
-    private void SetSpnnierSeason() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                act_user.getApplicationContext(),
-                android.R.layout.simple_spinner_item,
-                lst_SeasonName);
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        act_user.spn_seasons.setAdapter(adapter);
-
-        act_user.spn_seasons.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                data_Season s = re_season.data.get(re_season.data.size() - 1 - position);
-                selected_seasonId = s.seasonID;
-                PrintMMRS(selected_seasonId); //todo 다른 시즌 갔다 돌아오면 그래프 쪽에서 문제 발생
-                SetInfo_main(selected_seasonId);
-                SetInfo_Match(selected_seasonId);
-                Log.d("Season Name", s.seasonName + " / " + s.seasonID);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
+//    List<Integer> lst_SeasonId = new ArrayList<>();
+//    List<String> lst_SeasonName = new ArrayList<>();
+//
+//    private void SetLst_Season() {
+//        lst_SeasonId.clear();
+//        lst_SeasonName.clear();
+//        //플레이 기록이 있는 시즌만 추가하기
+//        for (UserGame game : lst_UserGames) {
+//            if (!lst_SeasonId.contains(game.seasonId)) {
+//                lst_SeasonId.add(game.seasonId);
+//                lst_SeasonName.add(SeasonIdtoName(game.seasonId));
+//            }
+//        }
+//    }
 
     private String SeasonIdtoName(int seasonId) {
         for (data_Season season : re_season.data) {
@@ -474,9 +463,14 @@ public class thd_Request extends Thread {
             com.example.erhistoryviewer.userStats nulluserstats = new userStats();
             nulluserstats.seasonId = seasonId;
             nodata.userStats.add(nulluserstats);
-            lst_UserStats.add(nodata);
+            userStat_rank = nodata;
         } else {
-            lst_UserStats.add(userStats);
+            if (seasonId != 0) {
+                userStat_rank = userStats;
+            } else {
+                userStat_normal = userStats.userStats.get(2);
+                userStat_cobalt = userStats.userStats.get(3);
+            }
         }
     }
 

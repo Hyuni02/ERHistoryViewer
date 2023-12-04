@@ -47,7 +47,6 @@ public class act_user extends AppCompatActivity {
     TextView txt_level;
     ImageView img_mostcharacter;
 
-    Spinner spn_seasons;
     static RequestQueue requestQueue;
 
     TabLayout tabLayout_info;
@@ -162,7 +161,6 @@ public class act_user extends AppCompatActivity {
         txt_nickname = findViewById(R.id.txt_nickname);
         tabLayout_info = findViewById(R.id.tablayout_info);
         tabLayout_match = findViewById(R.id.tablayout_match);
-        spn_seasons = findViewById(R.id.spn_season);
         //스크롤뷰
         scv_info_rank = findViewById(R.id.scv_info_rank);
         scv_info_normal = findViewById(R.id.scv_info_normal);

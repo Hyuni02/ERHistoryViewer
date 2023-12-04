@@ -1,0 +1,53 @@
+{
+	"code": 200,
+	"message": "Success",
+	"userStats": [
+		{
+			"seasonId": 21,
+			"userNum": 2603766,
+			"matchingMode": 3,
+			"matchingTeamMode": 3,
+			"mmr": 2866,
+			"nickname": "ErrorCode02",
+			"rank": 55579,
+			"rankSize": 115139,
+			"totalGames": 24,
+			"totalWins": 1,
+			"totalTeamKills": 148,
+			"totalDeaths": 51,
+			"escapeCount": 0,
+			"rankPercent": 0.48,
+			"averageRank": 4.96,
+			"averageKills": 1.75,
+			"averageAssistants": 2.79,
+			"averageHunts": 21.5,
+			"top1": 0.04,
+			"top2": 0.17,
+			"top3": 0.29,
+			"top5": 0.54,
+			"top7": 0.83,
+			"characterStats": [
+				{
+					"characterCode": 10,
+					"totalGames": 23,
+					"usages": 23,
+					"maxKillings": 4,
+					"top3": 6,
+					"wins": 1,
+					"top3Rate": 0,
+					"averageRank": 5
+				},
+				{
+					"characterCode": 33,
+					"totalGames": 1,
+					"usages": 1,
+					"maxKillings": 0,
+					"top3": 1,
+					"wins": 0,
+					"top3Rate": 1,
+					"averageRank": 3
+				}
+			]
+		}
+	]
+}

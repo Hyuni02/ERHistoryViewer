@@ -1,0 +1,228 @@
+{
+	"code": 200,
+	"message": "Success",
+	"userStats": [
+		{
+			"seasonId": 0,
+			"userNum": 2603766,
+			"matchingMode": 2,
+			"matchingTeamMode": 1,
+			"nickname": "ErrorCode02",
+			"rank": 102518,
+			"rankSize": 1672873,
+			"totalGames": 497,
+			"totalWins": 13,
+			"totalTeamKills": 404,
+			"escapeCount": 0,
+			"rankPercent": 0.06,
+			"averageRank": 9.33,
+			"averageKills": 0.81,
+			"averageAssistants": 0.0,
+			"averageHunts": 13.41,
+			"top1": 0.03,
+			"top2": 0.07,
+			"top3": 0.14,
+			"top5": 0.28,
+			"top7": 0.4,
+			"characterStats": [
+				{
+					"characterCode": 10,
+					"totalGames": 123,
+					"usages": 123,
+					"maxKillings": 7,
+					"top3": 24,
+					"wins": 3,
+					"top3Rate": 0,
+					"averageRank": 9
+				},
+				{
+					"characterCode": 33,
+					"totalGames": 101,
+					"usages": 101,
+					"maxKillings": 7,
+					"top3": 21,
+					"wins": 8,
+					"top3Rate": 0,
+					"averageRank": 8
+				},
+				{
+					"characterCode": 21,
+					"totalGames": 57,
+					"usages": 57,
+					"maxKillings": 6,
+					"top3": 10,
+					"wins": 1,
+					"top3Rate": 0,
+					"averageRank": 8
+				}
+			]
+		},
+		{
+			"seasonId": 0,
+			"userNum": 2603766,
+			"matchingMode": 2,
+			"matchingTeamMode": 2,
+			"nickname": "ErrorCode02",
+			"rank": 105050,
+			"rankSize": 1414670,
+			"totalGames": 121,
+			"totalWins": 25,
+			"totalTeamKills": 502,
+			"escapeCount": 1,
+			"rankPercent": 0.07,
+			"averageRank": 3.89,
+			"averageKills": 1.74,
+			"averageAssistants": 1.83,
+			"averageHunts": 14.02,
+			"top1": 0.21,
+			"top2": 0.38,
+			"top3": 0.5,
+			"top5": 0.75,
+			"top7": 0.92,
+			"characterStats": [
+				{
+					"characterCode": 33,
+					"totalGames": 43,
+					"usages": 43,
+					"maxKillings": 7,
+					"top3": 28,
+					"wins": 13,
+					"top3Rate": 1,
+					"averageRank": 3
+				},
+				{
+					"characterCode": 21,
+					"totalGames": 26,
+					"usages": 26,
+					"maxKillings": 6,
+					"top3": 11,
+					"wins": 4,
+					"top3Rate": 0,
+					"averageRank": 4
+				},
+				{
+					"characterCode": 1,
+					"totalGames": 14,
+					"usages": 14,
+					"maxKillings": 5,
+					"top3": 6,
+					"wins": 2,
+					"top3Rate": 0,
+					"averageRank": 4
+				}
+			]
+		},
+		{
+			"seasonId": 0,
+			"userNum": 2603766,
+			"matchingMode": 2,
+			"matchingTeamMode": 3,
+			"nickname": "ErrorCode02",
+			"rank": 41631,
+			"rankSize": 1696210,
+			"totalGames": 221,
+			"totalWins": 31,
+			"totalTeamKills": 1447,
+			"totalDeaths": 374,
+			"escapeCount": 2,
+			"rankPercent": 0.02,
+			"averageRank": 4.29,
+			"averageKills": 1.74,
+			"averageAssistants": 3.05,
+			"averageHunts": 15.24,
+			"top1": 0.14,
+			"top2": 0.25,
+			"top3": 0.4,
+			"top5": 0.63,
+			"top7": 0.93,
+			"characterStats": [
+				{
+					"characterCode": 10,
+					"totalGames": 109,
+					"usages": 109,
+					"maxKillings": 7,
+					"top3": 43,
+					"wins": 15,
+					"top3Rate": 0,
+					"averageRank": 4
+				},
+				{
+					"characterCode": 67,
+					"totalGames": 37,
+					"usages": 37,
+					"maxKillings": 5,
+					"top3": 9,
+					"wins": 4,
+					"top3Rate": 0,
+					"averageRank": 5
+				},
+				{
+					"characterCode": 33,
+					"totalGames": 29,
+					"usages": 29,
+					"maxKillings": 5,
+					"top3": 18,
+					"wins": 6,
+					"top3Rate": 1,
+					"averageRank": 4
+				}
+			]
+		},
+		{
+			"seasonId": 0,
+			"userNum": 2603766,
+			"matchingMode": 6,
+			"matchingTeamMode": 4,
+			"nickname": "ErrorCode02",
+			"rank": 24035,
+			"rankSize": 320096,
+			"totalGames": 132,
+			"totalWins": 47,
+			"totalTeamKills": 2762,
+			"totalDeaths": 118,
+			"escapeCount": 0,
+			"rankPercent": 0.08,
+			"averageRank": 1.64,
+			"averageKills": 3.54,
+			"averageAssistants": 10.56,
+			"averageHunts": 22.27,
+			"top1": 0.36,
+			"top2": 1.0,
+			"top3": 1.0,
+			"top5": 1.0,
+			"top7": 1.0,
+			"characterStats": [
+				{
+					"characterCode": 33,
+					"totalGames": 17,
+					"usages": 17,
+					"maxKillings": 10,
+					"top3": 17,
+					"wins": 7,
+					"top3Rate": 1,
+					"averageRank": 2
+				},
+				{
+					"characterCode": 10,
+					"totalGames": 16,
+					"usages": 16,
+					"maxKillings": 9,
+					"top3": 16,
+					"wins": 6,
+					"top3Rate": 1,
+					"averageRank": 2
+				},
+				{
+					"characterCode": 1,
+					"totalGames": 13,
+					"usages": 13,
+					"maxKillings": 9,
+					"top3": 13,
+					"wins": 4,
+					"top3Rate": 1,
+					"averageRank": 2
+				}
+			]
+		}
+	]
+}

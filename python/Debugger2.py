@@ -1,12 +1,10 @@
 import ERHistoryViewer as er
-from pprint import pprint
-import time
-import json
 import Debugger as deb
 
-usernum = er.GetUserNum("섹시뽀짝김용주")
-userstat = er.GetUserStats(usernum, 19)
+input = "이이이이이이이이"
+usernum = er.GetUserNum(input)
+userstat = er.GetUserStats(usernum, 21)
 
-deb.ExportJson(userstat, "season20stats")
+deb.ExportJson(userstat, f"season_{input}_userstats")
 
 

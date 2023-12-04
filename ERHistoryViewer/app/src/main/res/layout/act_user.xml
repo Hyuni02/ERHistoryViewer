@@ -63,7 +63,7 @@
 
                 <ImageView
                     android:id="@+id/img_mostcharacter"
-                    android:layout_width="168dp"
+                    android:layout_width="164dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0"
                     app:srcCompat="@drawable/mostcharacter" />

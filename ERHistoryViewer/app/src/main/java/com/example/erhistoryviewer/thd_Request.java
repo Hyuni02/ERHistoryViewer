@@ -92,6 +92,7 @@ public class thd_Request extends Thread {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    PrintMMRS(currentSeasonId);
                     SetInfo_main(currentSeasonId);
                     SetInfo_Match();
                 }
@@ -170,7 +171,11 @@ public class thd_Request extends Thread {
             switch (game.matchingMode) {
                 //랭크게임
                 case 3:
-                    //todo 대전기록-랭크 패널에 대전기록 추가 (선택한 시즌에 맞춰 visible/gone)
+                    if (game.seasonId != currentSeasonId) {
+                        continue;
+                    }
+                    //todo 대전기록-랭크 패널에 대전기록 추가
+
 
                     //날짜/시즌별 mmr획득량 기록 <시즌, 날짜, mmr>
                     LocalDate date = LocalDate.parse(game.startDtm.split("T")[0]);
@@ -180,36 +185,29 @@ public class thd_Request extends Thread {
                         points.add(point);
                         Log.d("Add MMR", date + " : " + game.mmrAfter);
                     }
-
-                    if (game.seasonId != currentSeasonId) {
-                        continue;
-                    }
                     lst_UserGames_rank.add(game);
                     break;
                 //일반게임
                 case 2:
-                    //todo 대전기록-일반 패널에 대전기록 추가
-
                     //날짜를 이용해서 시즌 계산 seasonId 수정
                     game.seasonId = GetNormalSeasonId(game.startDtm);
-
-                    //todo (선택한 시즌에 맞춰 visible/gone)
-
-
                     if (game.seasonId != currentSeasonId) {
                         continue;
                     }
+                    //todo 대전기록-일반 패널에 대전기록 추가
+
+
                     lst_UserGames_normal.add(game);
                     break;
                 //코발트
                 case 6:
-                    //todo 코발트 대전기록 표시
                     game.seasonId = GetNormalSeasonId(game.startDtm);
-
-
                     if (game.seasonId != currentSeasonId) {
                         continue;
                     }
+                    //todo 코발트 대전기록 표시
+
+
                     lst_UserGames_cobalt.add(game);
                     break;
             }
@@ -264,9 +262,9 @@ public class thd_Request extends Thread {
         act_user.mmrGraph.getDescription().setEnabled(false);
         act_user.mmrGraph.setTouchEnabled(true);
         act_user.mmrGraph.setDragXEnabled(true);
-        act_user.mmrGraph.setVisibleXRange(1, 6);
+//        act_user.mmrGraph.setVisibleXRange(1, 5);
+        act_user.mmrGraph.setVisibleXRangeMaximum(5);
         act_user.mmrGraph.moveViewToX(lineDataSet.getEntryCount());
-
         //그래프 적용
         //todo 다른 시즌 갔다 돌아오면 문제 발생
         act_user.mmrGraph.setData(lineData);

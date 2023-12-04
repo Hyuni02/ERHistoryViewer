@@ -18,4 +18,6 @@ public class UserGame {
     int mmrBefore;
     int mmrGain;
     int mmrAfter;
+    int damageToPlayer;
+    int damageFromPlayer;
 }

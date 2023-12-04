@@ -345,8 +345,11 @@ public class thd_Request extends Thread {
     }
 
     private int GetAvgDmg(ArrayList<UserGame> lst) {
-        //todo 평균 딜량 구하기
-        return -1;
+        int total = 0;
+        for (UserGame game : lst) {
+            total += game.damageToPlayer;
+        }
+        return total/lst.size();
     }
 
     private rankInfo MMRtoTier(int mmr, int rank) {
@@ -409,21 +412,6 @@ public class thd_Request extends Thread {
         Log.d("Error", "Can't Find Tier " + mmr);
         return null;
     }
-
-//    List<Integer> lst_SeasonId = new ArrayList<>();
-//    List<String> lst_SeasonName = new ArrayList<>();
-//
-//    private void SetLst_Season() {
-//        lst_SeasonId.clear();
-//        lst_SeasonName.clear();
-//        //플레이 기록이 있는 시즌만 추가하기
-//        for (UserGame game : lst_UserGames) {
-//            if (!lst_SeasonId.contains(game.seasonId)) {
-//                lst_SeasonId.add(game.seasonId);
-//                lst_SeasonName.add(SeasonIdtoName(game.seasonId));
-//            }
-//        }
-//    }
 
     private String SeasonIdtoName(int seasonId) {
         for (data_Season season : re_season.data) {

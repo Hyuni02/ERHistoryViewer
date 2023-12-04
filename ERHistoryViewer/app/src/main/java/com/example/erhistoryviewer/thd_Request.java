@@ -4,6 +4,7 @@ package com.example.erhistoryviewer;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.os.Handler;
 import android.view.View;
@@ -18,20 +19,24 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.LongBinaryOperator;
 
 public class thd_Request extends Thread {
     private String thdName = "";
 
+    int sleeptime = 1000;
     private int next = 0;
     private int level = 0;
     private int mostCharacter = 0;
-    private String userName;
+    private String userName = "";
     private int lastPlaySeasonId = -1;
     String userNum = "";
     Converter converter;
@@ -60,15 +65,39 @@ public class thd_Request extends Thread {
         Log.i("시작된 스레드", thdName);
         // 스레드에게 수행시킬 동작들 구현
         try {
-            Thread.sleep(1000);
+            Thread.sleep(sleeptime);
 
             re_season = Request_Season();
-            Thread.sleep(1000);
+            Thread.sleep(sleeptime);
 
+            //유저 게임 기록 많이 받아오기
+            for (int i = 0; i < 10; i++) {
+                Thread.sleep(sleeptime);
+                Request_UserGame();
+                Log.d("next", Integer.toString(next));
+                if (next == 0) {
+                    Log.d("Break", "No More Games");
+                    break;
+                }
+            }
+            SetLst_Season();
+            for (Integer seasonId : lst_SeasonId) {
+                Request_UserStats(seasonId);
+            }
+
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    SetSpnnierSeason();
+                }
+            });
+
+            /*
 
             //유저 게임 기록 1개 불러오기
             lastPlaySeasonId = Request_UserGame();
-            Thread.sleep(1000);
+            Thread.sleep(sleeptime);
             Log.d("next", Integer.toString(next));
 
             //첫번째 게임 기록의 시즌을 가져와서 스탯 검색
@@ -77,7 +106,7 @@ public class thd_Request extends Thread {
             Log.d("Level", Integer.toString(level));
             Log.d("NickName", userName);
             Log.d("Most Character", Integer.toString(mostCharacter));
-            Thread.sleep(1000);
+            Thread.sleep(sleeptime);
             Request_MostCharacterImage();
             //UI스래드 접근
             handler.post(new Runnable() {
@@ -92,7 +121,7 @@ public class thd_Request extends Thread {
             //next가 있으면 5회 || next가 없을 때까지 대전기록 가져오기
             if (next != 0) {
                 for (int i = 0; i < 10; i++) {
-                    Thread.sleep(1000);
+                    Thread.sleep(sleeptime);
                     Request_UserGame();
                     Log.d("next", Integer.toString(next));
                     if (next == 0) {
@@ -110,6 +139,38 @@ public class thd_Request extends Thread {
             PrintMMRS(lastPlaySeasonId);
             SetInfo(lastPlaySeasonId);
 
+            */
+            StringBuilder sb = new StringBuilder();
+            for (UserGame userGame : lst_UserGames) {
+                sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
+            }
+            Log.d("Games", sb.toString());
+
+            sb = new StringBuilder();
+            for (String seasonName : lst_SeasonName) {
+                sb.append(seasonName + "\n");
+            }
+            Log.d("Season Name", sb.toString());
+
+            sb = new StringBuilder();
+            for (Integer seasonId : lst_SeasonId) {
+                sb.append(seasonId + "\n");
+            }
+            Log.d("Season Id", sb.toString());
+
+            sb = new StringBuilder();
+            for (RE_UserStats userStats : lst_UserStats) {
+                sb.append(userStats.userStats.get(0).seasonId);
+                if (userStats.code == 404) {
+                    sb.append(" : no data\n");
+                } else {
+                    for (CharacterStats characterStats : userStats.userStats.get(0).characterStats) {
+                        sb.append(" : " + act_user.CharacterCodetoName(characterStats.characterCode));
+                    }
+                    sb.append("\n");
+                }
+            }
+            Log.d("UserStats", sb.toString());
 
             Log.d("done", "done");
         } catch (InterruptedException e) {
@@ -120,21 +181,13 @@ public class thd_Request extends Thread {
 
     Bitmap bitmap;
 
-    private void Request_MostCharacterImage() {
+    private Drawable Get_MostCharacterImage(int characterCode) {
         Log.d("Request", "MostCharacterImage");
-        String charName = act_user.CharacterCodetoName(mostCharacter);
+        String charName = act_user.CharacterCodetoName(characterCode).toLowerCase();
         String skinCode = "S000"; //todo 가장 많이 사용한 스킨 찾기 구현
-        String url_dak = String.format("https://cdn.dak.gg/assets/er/game-assets/1.9.0/CharResult_%s_%s.png", charName, skinCode);
-        try {
-            URL url = new URL(url_dak);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setDoInput(true); // 서버로부터 응답 수신
-            conn.connect(); //연결된 곳에 접속할 때 (connect() 호출해야 실제 통신 가능함)
-            InputStream is = conn.getInputStream(); //inputStream 값 가져오기
-            bitmap = BitmapFactory.decodeStream(is); // Bitmap으로 변환
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        int drawableResourceId = act_user.getResources().getIdentifier(charName, "drawable", act_user.getPackageName());
+        Drawable img = act_user.getResources().getDrawable(drawableResourceId);
+        return img;
     }
 
     private RE_Season Request_Season() {
@@ -205,6 +258,9 @@ public class thd_Request extends Thread {
         }
         Log.d("UserGame", stringBuilder.toString());
         level = Math.max(userGame.userGames.get(0).accountLevel, level);
+        if (userName == "") {
+            userName = userGame.userGames.get(0).nickname;
+        }
         return userGame.userGames.get(0).seasonId;
     }
 
@@ -219,6 +275,7 @@ public class thd_Request extends Thread {
 
     LineData lineData;
     ArrayList<String> Dates = new ArrayList<>();
+
     private void PrintMMRS(int seasonId) {
         lineData = new LineData();
         ArrayList<Entry> chart = new ArrayList<>();
@@ -243,7 +300,7 @@ public class thd_Request extends Thread {
         act_user.mmrGraph.getDescription().setEnabled(false);
         act_user.mmrGraph.setTouchEnabled(true);
         act_user.mmrGraph.setDragXEnabled(true);
-        act_user.mmrGraph.setVisibleXRange(1,6);
+        act_user.mmrGraph.setVisibleXRange(1, 6);
         act_user.mmrGraph.moveViewToX(lineDataSet.getEntryCount());
 
         //그래프 적용
@@ -252,15 +309,24 @@ public class thd_Request extends Thread {
         act_user.mmrGraph.invalidate();
         Log.d("MMRS", stringBuilder.toString());
     }
-    private void SetInfo(int seasonId){
-//        act_user.img_tier.setImageDrawable(MMRtoTier());
+
+    private void SetInfo(int seasonId) {
+        act_user.txt_level.setText("LV " + level);
+        act_user.txt_nickname.setText(userName);
+        if (lst_UserStats.get(lst_SeasonId.indexOf(seasonId)).code == 404) {
+            //todo 정보 없음 사진 표시
+        }
+        else {
+            act_user.img_mostcharacter.setImageDrawable(Get_MostCharacterImage(lst_UserStats.get(lst_SeasonId.indexOf(seasonId)).userStats.get(0).characterStats.get(0).characterCode));
+        }
     }
-    private rankInfo MMRtoTier(int mmr, int rank){
-        for(tierIndex tier : act_user.TierIndex){
-            if(tier.top <= mmr && tier.bottom >= mmr){
+
+    private rankInfo MMRtoTier(int mmr, int rank) {
+        for (tierIndex tier : act_user.TierIndex) {
+            if (tier.top <= mmr && tier.bottom >= mmr) {
                 rankInfo rankInfo = new rankInfo();
                 rankInfo.name = tier.tierName;
-                switch (tier.tierName){
+                switch (tier.tierName) {
                     case "아이언IV":
                     case "아이언III":
                     case "아이언II":
@@ -301,10 +367,10 @@ public class thd_Request extends Thread {
                         rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_mythril);
                         break;
                 }
-                if(rank <= 700){
+                if (rank <= 700) {
                     rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_demigod);
                 }
-                if(rank <= 200){
+                if (rank <= 200) {
                     rankInfo.image = act_user.getResources().getDrawable(R.drawable.img_eternity);
                 }
                 return rankInfo;
@@ -318,8 +384,9 @@ public class thd_Request extends Thread {
     List<String> lst_SeasonName = new ArrayList<>();
     int selected_seasonId = -1;
 
-    private void SetSpnnierSeason() {
+    private void SetLst_Season() {
         lst_SeasonId.clear();
+        lst_SeasonName.clear();
         //플레이 기록이 있는 시즌만 추가하기
         for (UserGame game : lst_UserGames) {
             if (!lst_SeasonId.contains(game.seasonId)) {
@@ -327,7 +394,9 @@ public class thd_Request extends Thread {
                 lst_SeasonName.add(SeasonIdtoName(game.seasonId));
             }
         }
+    }
 
+    private void SetSpnnierSeason() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 act_user.getApplicationContext(),
                 android.R.layout.simple_spinner_item,
@@ -341,9 +410,10 @@ public class thd_Request extends Thread {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 data_Season s = re_season.data.get(re_season.data.size() - 1 - position);
                 selected_seasonId = s.seasonID;
-                PrintMMRS(selected_seasonId);
+//                PrintMMRS(selected_seasonId);
+
                 SetInfo(selected_seasonId);
-                Log.d("Season Name", s.seasonName + "/" + s.seasonID);
+                Log.d("Season Name", s.seasonName + " / " + s.seasonID);
             }
 
             @Override
@@ -380,17 +450,21 @@ public class thd_Request extends Thread {
         return -1;
     }
 
-    private void Request_UserStats() {
-        Log.d("Request", "UserStats " + lastPlaySeasonId);
-        String response_UserStat = requester.Get("https://open-api.bser.io/v1/user/stats/" + userNum + "/" + lastPlaySeasonId);
+    private void Request_UserStats(int seasonId) {
+        Log.d("Request", "UserStats " + seasonId);
+        String response_UserStat = requester.Get("https://open-api.bser.io/v1/user/stats/" + userNum + "/" + seasonId);
         RE_UserStats userStats = converter.Convert_UserStats(response_UserStat);
         if (userStats.code == 404) {
-            lastPlaySeasonId--;
-            Request_UserStats();
-            return;
+            RE_UserStats nodata = new RE_UserStats();
+            nodata.code = 404;
+            nodata.message = "Not Found";
+            com.example.erhistoryviewer.userStats nulluserstats = new userStats();
+            nulluserstats.seasonId = seasonId;
+            nodata.userStats.add(nulluserstats);
+            lst_UserStats.add(nodata);
+        } else {
+            lst_UserStats.add(userStats);
         }
-        userName = userStats.userStats.get(0).nickname;
-        mostCharacter = userStats.userStats.get(0).characterStats.get(0).characterCode;
     }
 
 }

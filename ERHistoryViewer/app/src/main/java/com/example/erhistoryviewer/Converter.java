@@ -26,4 +26,10 @@ public class Converter {
         RE_UserStats re = gson.fromJson(response, RE_UserStats.class);
         return re;
     }
+
+    public RE_GameDetail Convert_GameDetail(String response){
+        Gson gson = new Gson();
+        RE_GameDetail re = gson.fromJson(response, RE_GameDetail.class);
+        return re;
+    }
 }

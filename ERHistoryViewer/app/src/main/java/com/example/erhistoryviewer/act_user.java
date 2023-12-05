@@ -95,7 +95,7 @@ public class act_user extends AppCompatActivity {
     TextView txt_winRate_cobalt;
 
     LineChart mmrGraph;
-
+    Map<Integer, RE_GameDetail> lst_GameDetail = new HashMap<>();
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -122,7 +122,6 @@ public class act_user extends AppCompatActivity {
         //스레드 시작
         thd_Request thd_request = new thd_Request("API Request Thread", this);
         thd_request.start();
-
     }
 
     private void Init() {

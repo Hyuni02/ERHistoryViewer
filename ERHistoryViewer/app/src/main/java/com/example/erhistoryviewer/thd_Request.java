@@ -1,15 +1,11 @@
 package com.example.erhistoryviewer;
 
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.os.Handler;
-
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -17,11 +13,13 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
-import java.io.ObjectInputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class thd_Request extends Thread {
     private final String thdName;
@@ -107,7 +105,18 @@ public class thd_Request extends Thread {
             SetHistoryItem(lst_UserGames_normal, R.id.content_history_normal, "normal");
             SetHistoryItem(lst_UserGames_cobalt, R.id.content_history_cobalt, "cobalt");
 
-            StringBuilder sb = new StringBuilder();
+            for(UserGame game : lst_UserGames_rank) {
+                Request_GameDetail(game.gameId);
+            }
+            for(UserGame game : lst_UserGames_normal) {
+                Request_GameDetail(game.gameId);
+            }
+            for(UserGame game : lst_UserGames_cobalt) {
+                Request_GameDetail(game.gameId);
+            }
+
+
+            StringBuilder sb;
             sb = new StringBuilder();
             for (UserGame userGame : lst_UserGames_rank) {
                 sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
@@ -235,6 +244,7 @@ public class thd_Request extends Thread {
 
             int drawableResourceId = act_user.getResources().getIdentifier(act_user.CharacterCodetoName(game.characterNum).toLowerCase(), "drawable", act_user.getPackageName());
             bundle.putInt("img", drawableResourceId);
+            bundle.putInt("gameId", game.gameId);
             bundle.putString("rank", Integer.toString(game.gameRank));
             bundle.putString("date", game.startDtm.split("T")[0]);
             int teamKill = game.teamKill;
@@ -479,6 +489,22 @@ public class thd_Request extends Thread {
                 userStat_cobalt = userStats.userStats.get(3);
             }
         }
+    }
+
+    private RE_GameDetail Request_GameDetail(int gameId){
+        Log.d("Request", "Game Detail : " + gameId);
+        String response_GameDetail = requester.Get("https://open-api.bser.io/v1/games/" + gameId);
+        RE_GameDetail gameDetail = converter.Convert_GameDetail(response_GameDetail);
+
+        act_user.lst_GameDetail.put(gameId, gameDetail);
+        Log.d("Put", Integer.toString(gameId));
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < gameDetail.userGames.size(); i++) {
+            stringBuilder.append("(" + gameDetail.userGames.get(i).gameRank + ")\t" + gameDetail.userGames.get(i).nickname + "\n");
+        }
+        Log.d("Game Detail", stringBuilder.toString());
+        return gameDetail;
     }
 
 }

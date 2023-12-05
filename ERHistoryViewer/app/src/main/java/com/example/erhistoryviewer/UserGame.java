@@ -24,5 +24,6 @@ public class UserGame {
     int playerKill;
     int playerAssistant;
     int teamKill;
+    int teamNumber;
 
 }

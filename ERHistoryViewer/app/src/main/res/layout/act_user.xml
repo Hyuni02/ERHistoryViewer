@@ -378,14 +378,7 @@
                     android:id="@+id/content_history_rank"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/textView11"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="history rank" />
-                </LinearLayout>
+                    android:orientation="vertical"/>
             </ScrollView>
 
             <ScrollView
@@ -398,14 +391,7 @@
                     android:id="@+id/content_history_normal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/textView12"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="history normal" />
-                </LinearLayout>
+                    android:orientation="vertical"/>
             </ScrollView>
 
             <ScrollView
@@ -418,14 +404,7 @@
                     android:id="@+id/content_history_cobalt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/textView13"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="history normal" />
-                </LinearLayout>
+                    android:orientation="vertical"/>
             </ScrollView>
 
         </LinearLayout>

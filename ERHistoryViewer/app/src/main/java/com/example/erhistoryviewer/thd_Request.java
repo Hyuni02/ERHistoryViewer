@@ -4,8 +4,12 @@ package com.example.erhistoryviewer;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.util.Log;
 import android.os.Handler;
+
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -13,11 +17,11 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
+import java.io.ObjectInputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 public class thd_Request extends Thread {
     private final String thdName;
@@ -40,6 +44,7 @@ public class thd_Request extends Thread {
     RE_UserStats userStat_rank;
     userStats userStat_normal;
     userStats userStat_cobalt;
+
 
     public thd_Request(String thdname, act_user act_user) {
         // 초기화 작업
@@ -98,6 +103,9 @@ public class thd_Request extends Thread {
                 }
             });
 
+            SetHistoryItem(lst_UserGames_rank, R.id.content_history_rank, "rank");
+            SetHistoryItem(lst_UserGames_normal, R.id.content_history_normal, "normal");
+            SetHistoryItem(lst_UserGames_cobalt, R.id.content_history_cobalt, "cobalt");
 
             StringBuilder sb = new StringBuilder();
             sb = new StringBuilder();
@@ -130,8 +138,6 @@ public class thd_Request extends Thread {
         }
         Log.i("종료된 스레드", thdName);
     }
-
-    Bitmap bitmap;
 
     private Drawable Get_MostCharacterImage(int characterCode) {
         String charName = act_user.CharacterCodetoName(characterCode).toLowerCase();
@@ -174,9 +180,6 @@ public class thd_Request extends Thread {
                     if (game.seasonId != currentSeasonId) {
                         continue;
                     }
-                    //todo 대전기록-랭크 패널에 대전기록 추가
-
-
                     //날짜/시즌별 mmr획득량 기록 <시즌, 날짜, mmr>
                     LocalDate date = LocalDate.parse(game.startDtm.split("T")[0]);
                     GraphPoint sameDate = hasDate(date);
@@ -194,9 +197,6 @@ public class thd_Request extends Thread {
                     if (game.seasonId != currentSeasonId) {
                         continue;
                     }
-                    //todo 대전기록-일반 패널에 대전기록 추가
-
-
                     lst_UserGames_normal.add(game);
                     break;
                 //코발트
@@ -205,9 +205,6 @@ public class thd_Request extends Thread {
                     if (game.seasonId != currentSeasonId) {
                         continue;
                     }
-                    //todo 코발트 대전기록 표시
-
-
                     lst_UserGames_cobalt.add(game);
                     break;
             }
@@ -226,6 +223,32 @@ public class thd_Request extends Thread {
             userName = userGame.userGames.get(0).nickname;
         }
         return userGame.userGames.get(0).seasonId;
+    }
+
+    private void SetHistoryItem(ArrayList<UserGame> lst, int containerId, String type) {
+        act_user.fragmentTransaction = act_user.fragmentManager.beginTransaction();
+        for (UserGame game : lst) {
+            frg_historyItem frg_historyitem = new frg_historyItem();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("matchmode", type);
+
+            int drawableResourceId = act_user.getResources().getIdentifier(act_user.CharacterCodetoName(game.characterNum).toLowerCase(), "drawable", act_user.getPackageName());
+            bundle.putInt("img", drawableResourceId);
+            bundle.putString("rank", Integer.toString(game.gameRank));
+            bundle.putString("date", game.startDtm.split("T")[0]);
+            int teamKill = game.teamKill;
+            int playerKill = game.playerKill;
+            int playerDeaths = game.playerDeaths;
+            int playerAssistant = game.playerAssistant;
+            bundle.putString("kda", playerKill + "(" + teamKill + ")/" + playerDeaths + "/" + playerAssistant);
+            bundle.putString("dmg", Integer.toString(game.damageToPlayer));
+
+            frg_historyitem.setArguments(bundle);
+            act_user.fragmentTransaction.add(containerId, frg_historyitem);
+            Log.d("Fragment", game.gameId + " : " + game.gameRank);
+        }
+        act_user.fragmentTransaction.commit();
     }
 
     private GraphPoint hasDate(LocalDate date) {
@@ -304,21 +327,19 @@ public class thd_Request extends Thread {
         }
         //일반
         act_user.txt_gameCount.setText("게임 수 " + lst_UserGames_normal.size());
-        if(lst_UserGames_normal.size() == 0) {
+        if (lst_UserGames_normal.size() == 0) {
             act_user.txt_avgRank.setText("데이터 없음");
             act_user.txt_winRate.setText("");
-        }
-        else{
+        } else {
             act_user.txt_avgRank.setText("평균 순위 " + String.format("%.1f", GetAvgRank(lst_UserGames_normal)) + "위");
             act_user.txt_winRate.setText("승률 " + String.format("%.1f", GetWinRate(lst_UserGames_normal)) + "%");
         }
         //코발트
         act_user.txt_gameCount_cobalt.setText("게임 수 " + lst_UserGames_cobalt.size());
-        if(lst_UserGames_cobalt.size() == 0){
+        if (lst_UserGames_cobalt.size() == 0) {
             act_user.txt_avgDmg.setText("데이터 없음");
             act_user.txt_winRate_cobalt.setText("");
-        }
-        else {
+        } else {
             act_user.txt_avgDmg.setText("평균 딜량 " + GetAvgDmg(lst_UserGames_cobalt));
             act_user.txt_winRate_cobalt.setText("승률 " + GetWinRate(lst_UserGames_cobalt) + "%");
         }
@@ -347,7 +368,7 @@ public class thd_Request extends Thread {
         for (UserGame game : lst) {
             total += game.damageToPlayer;
         }
-        return total/lst.size();
+        return total / lst.size();
     }
 
     private rankInfo MMRtoTier(int mmr, int rank) {

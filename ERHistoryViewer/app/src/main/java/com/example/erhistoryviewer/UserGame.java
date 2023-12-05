@@ -20,4 +20,9 @@ public class UserGame {
     int mmrAfter;
     int damageToPlayer;
     int damageFromPlayer;
+    int playerDeaths;
+    int playerKill;
+    int playerAssistant;
+    int teamKill;
+
 }

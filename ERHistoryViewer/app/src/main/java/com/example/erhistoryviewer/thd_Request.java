@@ -38,7 +38,6 @@ public class thd_Request extends Thread {
 
     act_user act_user;
     Handler handler = new Handler();
-    //    List<RE_UserStats> lst_UserStats = new ArrayList<>();
     RE_UserStats userStat_rank;
     userStats userStat_normal;
     userStats userStat_cobalt;

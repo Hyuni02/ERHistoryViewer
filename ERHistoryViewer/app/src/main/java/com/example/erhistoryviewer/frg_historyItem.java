@@ -18,27 +18,26 @@ import java.util.Map.Entry;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.HashMap;
 
 public class frg_historyItem extends Fragment {
-    public LinearLayout content_detail;
-    Button btn_close;
-
     Requester requester = new Requester();
     Converter converter = new Converter();
-    FragmentManager fragmentManager;
-
+    LinearLayout root;
     int gameId;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frg_historyitem, container, false);
-
+        root = view.findViewById(R.id.rootlayout);
         ImageView img_playCharacter = view.findViewById(R.id.img_playCharacter);
         TextView txt_gameRank = view.findViewById(R.id.txt_gameRank);
         TextView txt_kda = view.findViewById(R.id.txt_kda);
@@ -76,7 +75,6 @@ public class frg_historyItem extends Fragment {
                 break;
         }
 
-        fragmentManager = getActivity().getSupportFragmentManager();
         img_playCharacter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,39 +82,24 @@ public class frg_historyItem extends Fragment {
             }
         });
 
-        btn_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CloseDetail();
-            }
-        });
         return view;
     }
 
     private void OpenDetail() {
-        content_detail.setVisibility(View.VISIBLE);
-        btn_close.setVisibility(View.VISIBLE);
+        //todo 팝업 보이기
+        ((act_user) getActivity()).scv_gameDetail.setVisibility(View.VISIBLE);
 
-        //todo 리스트에 넣기
         StringBuilder sb = new StringBuilder();
 
         for (Map.Entry<Integer, RE_GameDetail> item : ((act_user) getActivity()).lst_GameDetail.entrySet()) {
             if (item.getKey() == gameId) {
                 sb.append("Selected GameID : " + gameId + "\n");
                 for (UserGame game : item.getValue().userGames) {
-                    //todo 게임 상세 정보 보기 구현 (팝업창 하나 만들어 두고 선택한 게임에 대한 정보 보이기)-scv_GameDetail
+                    //팝업 만들어서 그 팝업에 넣기
                     sb.append(game.nickname + "\n");
                 }
             }
         }
         Log.d("Open Detail", sb.toString());
     }
-
-
-    private void CloseDetail() {
-        content_detail.setVisibility(View.GONE);
-        btn_close.setVisibility(View.GONE);
-        content_detail.removeAllViews();
-    }
-
 }

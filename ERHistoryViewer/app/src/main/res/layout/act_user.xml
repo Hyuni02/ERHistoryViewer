@@ -10,7 +10,20 @@
         android:id="@+id/scv_GameDetail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_close"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="close" />
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/lin_search"

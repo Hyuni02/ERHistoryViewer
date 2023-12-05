@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -93,6 +94,8 @@ public class act_user extends AppCompatActivity {
     TextView txt_gameCount_cobalt;
     TextView txt_avgDmg;
     TextView txt_winRate_cobalt;
+    ScrollView scv_gameDetail;
+    Button btn_close;
 
     LineChart mmrGraph;
     Map<Integer, RE_GameDetail> lst_GameDetail = new HashMap<>();
@@ -194,6 +197,9 @@ public class act_user extends AppCompatActivity {
         txt_gameCount_cobalt = findViewById(R.id.txt_gameCount_cobalt);
         txt_avgDmg = findViewById(R.id.txt_avgDmg);
         txt_winRate_cobalt = findViewById(R.id.txt_winRate_cobalt);
+
+        scv_gameDetail = findViewById(R.id.scv_GameDetail);
+        btn_close = findViewById(R.id.btn_close);
     }
 
     public String CharacterCodetoName(int code) {
@@ -202,7 +208,7 @@ public class act_user extends AppCompatActivity {
 
     private void SetOnClick() {
         btn_search.setOnClickListener(v -> Request_UserNum());
-
+        btn_close.setOnClickListener(v->Close_GameDetail());
         img_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,6 +256,10 @@ public class act_user extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void Close_GameDetail(){
+        scv_gameDetail.setVisibility(View.GONE);
     }
 
     private void ChangeTab_Info(int index) {

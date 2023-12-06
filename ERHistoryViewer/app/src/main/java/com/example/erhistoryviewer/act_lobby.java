@@ -54,6 +54,25 @@ public class act_lobby extends AppCompatActivity {
                 Request_UserNum();
             }
         });
+
+        findViewById(R.id.txt_logo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StringRequest request = new StringRequest(
+                        Request.Method.GET,
+                        "http://192.168.55.223:8080",
+                        response -> {
+                            Log.d("Response",response);
+                        },
+                        error -> {
+                            println(error.toString());
+                            Log.e("UserNum", error.toString());
+                        }
+                );
+                request.setShouldCache(false);
+                requestQueue.add(request);
+            }
+        });
     }
 
     private void Request_UserNum() {

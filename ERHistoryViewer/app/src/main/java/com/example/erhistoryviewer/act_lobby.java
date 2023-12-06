@@ -58,15 +58,16 @@ public class act_lobby extends AppCompatActivity {
         findViewById(R.id.txt_logo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("Request", "Click Logo");
                 StringRequest request = new StringRequest(
                         Request.Method.GET,
-                        "http://192.168.55.223:8080",
+                        "http://49.50.164.182:8080",
                         response -> {
                             Log.d("Response",response);
                         },
                         error -> {
                             println(error.toString());
-                            Log.e("UserNum", error.toString());
+                            Log.e("Response", error.toString());
                         }
                 );
                 request.setShouldCache(false);

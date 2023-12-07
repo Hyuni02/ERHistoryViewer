@@ -41,26 +41,21 @@ def prediction():
     plt.grid()
     plt.legend()
     plt.show()
+    return graph
 
 
+g = prediction()
+x = g[:,0]
+y = g[:,1]
+x1 = []
+y2 = []
+for i in x:
+    x1.append(int(i))
+for j in y:
+    y2.append(int(j))
 point = {
-    'x': [
-        1, 2, 3
-    ],
-    'y': [
-        2, 4, 6
-    ]
+    'x': x1,
+    'y': y2
 }
-temp = {
-    "name": "bruce",
-    "age": 29,
-    "weight": 75.4,
-    "hobby": [
-        "soccer",
-        "tennis"
-    ],
-    "married": False,
-}
-
 r = json.dumps(point)
 print(r)

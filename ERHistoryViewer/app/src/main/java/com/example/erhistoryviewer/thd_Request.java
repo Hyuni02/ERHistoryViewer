@@ -122,9 +122,6 @@ public class thd_Request extends Thread {
             folder_name = act_user.getApplicationContext().getFilesDir().getPath().toString();
             filename = folder_name + "/mmrRaw.csv";
             MakeCSVFile();
-            connectPredictor();
-            UploadFile();
-
 
 
             for (UserGame game : lst_UserGames_rank) {
@@ -294,7 +291,7 @@ public class thd_Request extends Thread {
 
     String folder_name;
     String filename;
-    String serverURL = "http://10.50.99.165:8080";
+    String serverURL = "http://192.168.0.4:8080";
             //"http://10.50.99.165:8080/upload"; // Replace with your server URL
 
     private void MakeCSVFile() {
@@ -318,27 +315,10 @@ public class thd_Request extends Thread {
             String str = LocalDateTime.now().toString();
             fos.write(str.getBytes());
             fos.close(); //스트림 닫기
-            Toast.makeText(act_user, "저장되었습니다.\n" + str, Toast.LENGTH_SHORT).show();
+            UploadFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void connectPredictor() {
-        Log.d("connect predictor", "try connect");
-        StringRequest request = new StringRequest(
-                Request.Method.GET,
-                serverURL,
-                response -> {
-                    Log.d("connect predictor", response);
-                },
-                error -> {
-                    act_user.println(error.toString());
-                    Log.e("connect predictor", error.toString());
-                }
-        );
-        request.setShouldCache(false);
-        requestQueue.add(request);
     }
 
     private void UploadFile() {

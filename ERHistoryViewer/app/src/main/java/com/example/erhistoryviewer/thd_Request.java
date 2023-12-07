@@ -1,25 +1,39 @@
 package com.example.erhistoryviewer;
 
 
+import static com.example.erhistoryviewer.act_user.requestQueue;
+
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.os.Handler;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class thd_Request extends Thread {
     private final String thdName;
@@ -104,13 +118,22 @@ public class thd_Request extends Thread {
             SetHistoryItem(lst_UserGames_normal, R.id.content_history_normal, "normal");
             SetHistoryItem(lst_UserGames_cobalt, R.id.content_history_cobalt, "cobalt");
 
-            for(UserGame game : lst_UserGames_rank) {
+            //temp
+            folder_name = act_user.getApplicationContext().getFilesDir().getPath().toString();
+            filename = folder_name + "/mmrRaw.csv";
+            MakeCSVFile();
+            connectPredictor();
+            UploadFile();
+
+
+
+            for (UserGame game : lst_UserGames_rank) {
                 Request_GameDetail(game.gameId);
             }
-            for(UserGame game : lst_UserGames_normal) {
+            for (UserGame game : lst_UserGames_normal) {
                 Request_GameDetail(game.gameId);
             }
-            for(UserGame game : lst_UserGames_cobalt) {
+            for (UserGame game : lst_UserGames_cobalt) {
                 Request_GameDetail(game.gameId);
             }
 
@@ -269,6 +292,105 @@ public class thd_Request extends Thread {
         return null;
     }
 
+    String folder_name;
+    String filename;
+    String serverURL = "http://10.50.99.165:8080";
+            //"http://10.50.99.165:8080/upload"; // Replace with your server URL
+
+    private void MakeCSVFile() {
+        File newFolder = new File(folder_name);
+        try {
+            newFolder.mkdir();
+            Log.d("폴더생성", "폴더생성 성공");
+        } catch (Exception e) {
+            Log.d("폴더생성", "폴더생성이 이미 되어있거나 실패");
+        }
+
+        //전송할 데이터가 담긴 파일 생성
+        File file = new File(filename);
+        try {
+            Log.d("파일생성 : ", filename);
+            FileOutputStream fos = new FileOutputStream(file);
+
+            //todo csv 내용 넣기
+            //1번째 줄에는 0, 시즌종료일-첫게임날짜
+            //2번째 줄 부터는 시즌종료일-게임날짜, mmrAfter
+            String str = LocalDateTime.now().toString();
+            fos.write(str.getBytes());
+            fos.close(); //스트림 닫기
+            Toast.makeText(act_user, "저장되었습니다.\n" + str, Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void connectPredictor() {
+        Log.d("connect predictor", "try connect");
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                serverURL,
+                response -> {
+                    Log.d("connect predictor", response);
+                },
+                error -> {
+                    act_user.println(error.toString());
+                    Log.e("connect predictor", error.toString());
+                }
+        );
+        request.setShouldCache(false);
+        requestQueue.add(request);
+    }
+
+    private void UploadFile() {
+        Log.d("Upload file", "try file upload");
+        try {
+            File uploadFile = new File(filename);
+            String boundary = Long.toHexString(System.currentTimeMillis());
+            String CRLF = "\r\n";
+            HttpURLConnection connection = (HttpURLConnection) new URL(serverURL+"/upload").openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+            try (OutputStream output = connection.getOutputStream();
+                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, "UTF-8"), true)) {
+                writer.append("--" + boundary).append(CRLF);
+                writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"" + uploadFile.getName() + "\"").append(CRLF);
+                writer.append("Content-Type: text/csv").append(CRLF);
+                writer.append(CRLF).flush();
+
+                try (FileInputStream inputStream = new FileInputStream(uploadFile)) {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        output.write(buffer, 0, bytesRead);
+                    }
+                    output.flush();
+                }
+
+                writer.append(CRLF).flush();
+                writer.append("--" + boundary + "--").append(CRLF);
+            }
+
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                    String line;
+                    StringBuilder response = new StringBuilder();
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.d("file upload", response.toString());
+                }
+            } else {
+                Log.e("file upload fail", Integer.toString(responseCode));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("file upload fail", e.toString());
+        }
+    }
+
     private void PrintMMRS(int seasonId) {
         LineData lineData = new LineData();
         ArrayList<Entry> chart = new ArrayList<>();
@@ -295,10 +417,10 @@ public class thd_Request extends Thread {
         act_user.mmrGraph.setTouchEnabled(true);
         act_user.mmrGraph.setDragXEnabled(true);
 //        act_user.mmrGraph.setVisibleXRange(1, 5);
+        //todo 파이썬으로 csv보내서 결과 받고 표시하기
         act_user.mmrGraph.setVisibleXRangeMaximum(5);
         act_user.mmrGraph.moveViewToX(lineDataSet.getEntryCount());
         //그래프 적용
-        //todo 다른 시즌 갔다 돌아오면 문제 발생
         act_user.mmrGraph.setData(lineData);
         x.setValueFormatter(new IndexAxisValueFormatter(Dates));
         act_user.mmrGraph.invalidate();
@@ -490,7 +612,7 @@ public class thd_Request extends Thread {
         }
     }
 
-    private RE_GameDetail Request_GameDetail(int gameId){
+    private RE_GameDetail Request_GameDetail(int gameId) {
         Log.d("Request", "Game Detail : " + gameId);
         String response_GameDetail = requester.Get("https://open-api.bser.io/v1/games/" + gameId);
         RE_GameDetail gameDetail = converter.Convert_GameDetail(response_GameDetail);

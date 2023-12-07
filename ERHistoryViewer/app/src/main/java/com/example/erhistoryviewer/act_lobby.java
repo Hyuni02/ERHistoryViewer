@@ -1,5 +1,6 @@
 package com.example.erhistoryviewer;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,23 +64,13 @@ public class act_lobby extends AppCompatActivity {
         findViewById(R.id.txt_logo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Request", "Click Logo");
-                StringRequest request = new StringRequest(
-                        Request.Method.GET,
-                        "http://49.50.164.182:8080",
-                        response -> {
-                            Log.d("Response",response);
-                        },
-                        error -> {
-                            println(error.toString());
-                            Log.e("Response", error.toString());
-                        }
-                );
-                request.setShouldCache(false);
-                requestQueue.add(request);
+
             }
         });
     }
+
+    //todo 스래드로 옮기기
+
 
     private void Request_UserNum() {
         Log.d("Request", "Request UserNum");

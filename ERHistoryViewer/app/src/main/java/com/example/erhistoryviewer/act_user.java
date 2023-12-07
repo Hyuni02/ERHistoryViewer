@@ -384,7 +384,7 @@ public class act_user extends AppCompatActivity {
         }
     }
 
-    private void println(String data) {
+    public void println(String data) {
         Toast toast = Toast.makeText(this, data, Toast.LENGTH_SHORT);
         toast.show();
     }

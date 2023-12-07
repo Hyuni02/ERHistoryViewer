@@ -1,7 +1,7 @@
 import urllib.request
 import csv
 
-f = open("characterindex.csv",'r', encoding="utf-8")
+f = open("data/characterindex.csv", 'r', encoding="utf-8")
 rdr = csv.reader(f)
 for line in rdr:
     url = f"https://cdn.dak.gg/assets/er/game-assets/1.9.0/CharResult_{line[2]}_S000.png"

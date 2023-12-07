@@ -69,9 +69,6 @@ public class act_lobby extends AppCompatActivity {
         });
     }
 
-    //todo 스래드로 옮기기
-
-
     private void Request_UserNum() {
         Log.d("Request", "Request UserNum");
         String userName = edt_userName.getText().toString();

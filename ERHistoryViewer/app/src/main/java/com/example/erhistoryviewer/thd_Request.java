@@ -1,17 +1,12 @@
 package com.example.erhistoryviewer;
 
-
-import static com.example.erhistoryviewer.act_user.requestQueue;
-
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.os.Handler;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.toolbox.StringRequest;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -30,14 +25,13 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 public class thd_Request extends Thread {
     private final String thdName;
-
     int sleeptime = 1000;
     private int next = 0;
     private int level = 0;
@@ -47,15 +41,16 @@ public class thd_Request extends Thread {
     String userNum = "";
     Converter converter;
     Requester requester;
-
     RE_Season re_season;
-
     act_user act_user;
     Handler handler = new Handler();
     RE_UserStats userStat_rank;
     userStats userStat_normal;
     userStats userStat_cobalt;
-
+    List<GraphPoint> points = new ArrayList<>();
+    ArrayList<UserGame> lst_UserGames_rank = new ArrayList<>();
+    ArrayList<UserGame> lst_UserGames_normal = new ArrayList<>();
+    ArrayList<UserGame> lst_UserGames_cobalt = new ArrayList<>();
 
     public thd_Request(String thdname, act_user act_user) {
         // 초기화 작업
@@ -76,7 +71,9 @@ public class thd_Request extends Thread {
         try {
             Thread.sleep(sleeptime);
 
+            //시즌 데이터 받아오기
             re_season = Request_Season();
+            //현재 시즌 찾기
             for (data_Season data : re_season.data) {
                 if (data.isCurrent == 1) {
                     currentSeasonId = data.seasonID;
@@ -101,8 +98,10 @@ public class thd_Request extends Thread {
                 }
             }
 
+            //현 시즌 유저 정보 받아오기(랭크)
             Request_UserStats(currentSeasonId);
             Thread.sleep(sleeptime);
+            //유저의 일반 정보 받아오기
             Request_UserStats(0);
 
             handler.post(new Runnable() {
@@ -114,16 +113,12 @@ public class thd_Request extends Thread {
                 }
             });
 
+            //대전기록 표시
             SetHistoryItem(lst_UserGames_rank, R.id.content_history_rank, "rank");
             SetHistoryItem(lst_UserGames_normal, R.id.content_history_normal, "normal");
             SetHistoryItem(lst_UserGames_cobalt, R.id.content_history_cobalt, "cobalt");
 
-            //temp
-            folder_name = act_user.getApplicationContext().getFilesDir().getPath().toString();
-            filename = folder_name + "/mmrRaw.csv";
-            MakeCSVFile();
-
-
+            //게임 상세 기록 받아오기
             for (UserGame game : lst_UserGames_rank) {
                 Request_GameDetail(game.gameId);
             }
@@ -134,31 +129,42 @@ public class thd_Request extends Thread {
                 Request_GameDetail(game.gameId);
             }
 
+            //temp
+            folder_name = act_user.getApplicationContext().getFilesDir().getPath().toString();
+            filename = folder_name + "/mmrRaw.csv";
+            MakeCSVFile();
 
+            // region logs
             StringBuilder sb;
+
+            //랭크게임 목록
             sb = new StringBuilder();
             for (UserGame userGame : lst_UserGames_rank) {
                 sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
             }
             Log.d("Games_rank", sb.toString());
 
+            //일반게임 목록
             sb = new StringBuilder();
             for (UserGame userGame : lst_UserGames_normal) {
                 sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
             }
             Log.d("Games_normal", sb.toString());
 
+            //코발트게임 목록
             sb = new StringBuilder();
             for (UserGame userGame : lst_UserGames_cobalt) {
                 sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
             }
             Log.d("Games_cobalt", sb.toString());
 
+            //(시즌id, 날짜, mmr) 목록
             sb = new StringBuilder();
             for (GraphPoint point : points) {
                 sb.append(point.getDate() + " : " + point.getMMR() + "\n");
             }
             Log.d("MMR", sb.toString());
+            // endregion
 
             Log.d("done", "done");
         } catch (InterruptedException e) {
@@ -186,11 +192,6 @@ public class thd_Request extends Thread {
         Log.d("Season", stringBuilder.toString());
         return season;
     }
-
-    List<GraphPoint> points = new ArrayList<>();
-    ArrayList<UserGame> lst_UserGames_rank = new ArrayList<>();
-    ArrayList<UserGame> lst_UserGames_normal = new ArrayList<>();
-    ArrayList<UserGame> lst_UserGames_cobalt = new ArrayList<>();
 
     private int Request_UserGame() {
         Log.d("Request", "UserGame");
@@ -291,8 +292,8 @@ public class thd_Request extends Thread {
 
     String folder_name;
     String filename;
-    String serverURL = "http://192.168.0.4:8080";
-            //"http://10.50.99.165:8080/upload"; // Replace with your server URL
+    String serverURL = "http://192.168.55.223:8080";
+    //"http://10.50.99.165:8080/upload";
 
     private void MakeCSVFile() {
         File newFolder = new File(folder_name);
@@ -310,10 +311,20 @@ public class thd_Request extends Thread {
             FileOutputStream fos = new FileOutputStream(file);
 
             //todo csv 내용 넣기
+            StringBuilder data = new StringBuilder();
             //1번째 줄에는 0, 시즌종료일-첫게임날짜
+            LocalDate fin = LocalDate.parse(re_season.data.get(currentSeasonId).seasonEnd.split(" ")[0]);
+            LocalDate start = points.get(points.size() - 1).date;
+            long datediff = ChronoUnit.DAYS.between(start, fin);
+            data.append("0," + datediff);
             //2번째 줄 부터는 시즌종료일-게임날짜, mmrAfter
-            String str = LocalDateTime.now().toString();
-            fos.write(str.getBytes());
+            for(GraphPoint point : points){
+                start = point.getDate();
+                datediff = ChronoUnit.DAYS.between(start, fin);
+                data.append("\n"+datediff + "," + point.getMMR());
+            }
+            Log.d("Graph Points",data.toString());
+            fos.write(data.toString().getBytes());
             fos.close(); //스트림 닫기
             UploadFile();
         } catch (Exception e) {
@@ -327,7 +338,7 @@ public class thd_Request extends Thread {
             File uploadFile = new File(filename);
             String boundary = Long.toHexString(System.currentTimeMillis());
             String CRLF = "\r\n";
-            HttpURLConnection connection = (HttpURLConnection) new URL(serverURL+"/upload").openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL(serverURL + "/upload").openConnection();
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 

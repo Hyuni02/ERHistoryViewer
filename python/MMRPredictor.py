@@ -20,6 +20,10 @@ def upload_file():
         uploaded_file.save(file_path)
 
         pred = prediction()
+
+        if len(pred) == 0:
+            return 'Need More then 10 Games'
+
         x = []
         y = []
         for i in pred[:, 0]:
@@ -36,6 +40,9 @@ def prediction():
     # Load score data
     mmrGiven = parse[1:]
 
+    if len(mmrGiven) < 10:
+        return []
+
     # 주어진 (x, y) 좌표 데이터
     x = mmrGiven[:, 0] + 1  # x 값
     y = mmrGiven[:, 1]  # y 값
@@ -46,9 +53,9 @@ def prediction():
     a, b = coefficients
 
     pred = []
-    for i in range(1, int(parse[0][1])):
+    for i in range(1, int(parse[0][1]), 5):
         mmr = int(a * np.log(1 / i) + b)
-        pred.append([i-1, mmr])
+        pred.append([i - 1, mmr])
     graph = np.array(pred)
 
     return graph

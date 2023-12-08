@@ -32,4 +32,10 @@ public class Converter {
         RE_GameDetail re = gson.fromJson(response, RE_GameDetail.class);
         return re;
     }
+
+    public RE_xy Convert_xy(String response){
+        Gson gson = new Gson();
+        RE_xy re = gson.fromJson(response, RE_xy.class);
+        return re;
+    }
 }

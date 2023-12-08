@@ -94,10 +94,12 @@ public class act_user extends AppCompatActivity {
     TextView txt_gameCount_cobalt;
     TextView txt_avgDmg;
     TextView txt_winRate_cobalt;
+    TextView txt_nopred;
     ScrollView scv_gameDetail;
     Button btn_close;
 
     LineChart mmrGraph;
+    LineChart mmrGraph_pred;
     Map<Integer, RE_GameDetail> lst_GameDetail = new HashMap<>();
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -186,6 +188,8 @@ public class act_user extends AppCompatActivity {
         content_history_cobalt = findViewById(R.id.content_history_cobalt);
         //그래프
         mmrGraph = findViewById(R.id.grp);
+        txt_nopred = findViewById(R.id.txt_nopred);
+        mmrGraph_pred = findViewById(R.id.grp_pred);
 
         img_tier = findViewById(R.id.img_tier);
         txt_mmr = findViewById(R.id.txt_mmr);

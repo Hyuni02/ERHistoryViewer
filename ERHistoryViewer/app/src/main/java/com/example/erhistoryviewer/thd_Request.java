@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.os.Handler;
+import android.view.View;
 
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -24,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.attribute.UserPrincipalLookupService;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -48,6 +50,7 @@ public class thd_Request extends Thread {
     userStats userStat_normal;
     userStats userStat_cobalt;
     List<GraphPoint> points = new ArrayList<>();
+    List<GraphPoint> points_pred = new ArrayList<>();
     ArrayList<UserGame> lst_UserGames_rank = new ArrayList<>();
     ArrayList<UserGame> lst_UserGames_normal = new ArrayList<>();
     ArrayList<UserGame> lst_UserGames_cobalt = new ArrayList<>();
@@ -119,52 +122,53 @@ public class thd_Request extends Thread {
             SetHistoryItem(lst_UserGames_cobalt, R.id.content_history_cobalt, "cobalt");
 
             //게임 상세 기록 받아오기
-            for (UserGame game : lst_UserGames_rank) {
-                Request_GameDetail(game.gameId);
-            }
-            for (UserGame game : lst_UserGames_normal) {
-                Request_GameDetail(game.gameId);
-            }
-            for (UserGame game : lst_UserGames_cobalt) {
-                Request_GameDetail(game.gameId);
-            }
+//            for (UserGame game : lst_UserGames_rank) {
+//                Request_GameDetail(game.gameId);
+//            }
+//            for (UserGame game : lst_UserGames_normal) {
+//                Request_GameDetail(game.gameId);
+//            }
+//            for (UserGame game : lst_UserGames_cobalt) {
+//                Request_GameDetail(game.gameId);
+//            }
 
-            //temp
             folder_name = act_user.getApplicationContext().getFilesDir().getPath().toString();
             filename = folder_name + "/mmrRaw.csv";
+
             MakeCSVFile();
 
-            // region logs
-            StringBuilder sb;
+            boolean printlog = false;
+            if(printlog) {
+                StringBuilder sb;
 
-            //랭크게임 목록
-            sb = new StringBuilder();
-            for (UserGame userGame : lst_UserGames_rank) {
-                sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
-            }
-            Log.d("Games_rank", sb.toString());
+                //랭크게임 목록
+                sb = new StringBuilder();
+                for (UserGame userGame : lst_UserGames_rank) {
+                    sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
+                }
+                Log.d("Games_rank", sb.toString());
 
-            //일반게임 목록
-            sb = new StringBuilder();
-            for (UserGame userGame : lst_UserGames_normal) {
-                sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
-            }
-            Log.d("Games_normal", sb.toString());
+                //일반게임 목록
+                sb = new StringBuilder();
+                for (UserGame userGame : lst_UserGames_normal) {
+                    sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
+                }
+                Log.d("Games_normal", sb.toString());
 
-            //코발트게임 목록
-            sb = new StringBuilder();
-            for (UserGame userGame : lst_UserGames_cobalt) {
-                sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
-            }
-            Log.d("Games_cobalt", sb.toString());
+                //코발트게임 목록
+                sb = new StringBuilder();
+                for (UserGame userGame : lst_UserGames_cobalt) {
+                    sb.append(userGame.gameId + " (" + userGame.seasonId + ") [" + userGame.matchingMode + "] " + userGame.startDtm + "\n");
+                }
+                Log.d("Games_cobalt", sb.toString());
 
-            //(시즌id, 날짜, mmr) 목록
-            sb = new StringBuilder();
-            for (GraphPoint point : points) {
-                sb.append(point.getDate() + " : " + point.getMMR() + "\n");
+                //(시즌id, 날짜, mmr) 목록
+                sb = new StringBuilder();
+                for (GraphPoint point : points) {
+                    sb.append(point.getDate() + " : " + point.getMMR() + "\n");
+                }
+                Log.d("MMR", sb.toString());
             }
-            Log.d("MMR", sb.toString());
-            // endregion
 
             Log.d("done", "done");
         } catch (InterruptedException e) {
@@ -292,7 +296,7 @@ public class thd_Request extends Thread {
 
     String folder_name;
     String filename;
-    String serverURL = "http://10.50.107.124:8080";
+    String serverURL = "http://10.50.99.165:8080";
     //"http://10.50.99.165:8080/upload";
 
     private void MakeCSVFile() {
@@ -309,19 +313,17 @@ public class thd_Request extends Thread {
         try {
             Log.d("파일생성 : ", filename);
             FileOutputStream fos = new FileOutputStream(file);
-
-            //todo csv 내용 넣기
             StringBuilder data = new StringBuilder();
             //1번째 줄에는 0, 시즌종료일-첫게임날짜 = 시즌 종료까지 남은 날짜
-            LocalDate fin = LocalDate.parse(re_season.data.get(currentSeasonId).seasonEnd.split(" ")[0]);
-            LocalDate start = points.get(points.size() - 1).date;
+            LocalDate fin = LocalDate.parse(re_season.data.get(currentSeasonId).seasonEnd.split(" ")[0]); //시즌종료일
+            LocalDate start = points.get(points.size() - 1).date; //첫 게임 날짜
             long datediff = ChronoUnit.DAYS.between(start, fin);
             data.append("0," + datediff);
             //2번째 줄 부터는 첫게임 날짜-게임날짜, mmrAfter
-            for (GraphPoint point : points) {
-                fin = point.getDate();
+            for (UserGame game : lst_UserGames_rank) {
+                fin = LocalDate.parse(game.startDtm.split("T")[0]);
                 datediff = ChronoUnit.DAYS.between(start, fin);
-                data.append("\n" + datediff + "," + point.getMMR());
+                data.append("\n" + datediff + "," + game.mmrAfter);
             }
             Log.d("Graph Points", data.toString());
             fos.write(data.toString().getBytes());
@@ -331,6 +333,8 @@ public class thd_Request extends Thread {
             e.printStackTrace();
         }
     }
+
+    RE_xy xy;
 
     private void UploadFile() {
         Log.d("Upload file", "try file upload");
@@ -372,14 +376,84 @@ public class thd_Request extends Thread {
                         response.append(line);
                     }
                     Log.d("file upload", response.toString());
+                    if(response.toString().contentEquals("Need More then 10 Games".toString())){
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                act_user.txt_nopred.setVisibility(View.VISIBLE);
+                                act_user.txt_nopred.setText("경쟁전 기록이 부족합니다.\n 10건 이상의 기록이 필요합니다.");
+                                act_user.mmrGraph_pred.setVisibility(View.GONE);
+                                Log.d("Error", response.toString());
+                            }
+                        });
+                    }else{
+                        xy = converter.Convert_xy(response.toString());
+                        XtoDate();
+                    }
                 }
             } else {
-                Log.e("file upload fail", Integer.toString(responseCode));
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        act_user.txt_nopred.setVisibility(View.VISIBLE);
+                        act_user.txt_nopred.setText("기록 분석 서버에 연결 실패하였습니다.\n재시도 하려면 새로고침 하싶시오.");
+                        act_user.mmrGraph_pred.setVisibility(View.GONE);
+                        Log.e("file upload fail", Integer.toString(responseCode));
+                    }
+                });
             }
         } catch (IOException e) {
             e.printStackTrace();
             Log.e("file upload fail", e.toString());
         }
+    }
+
+    private void XtoDate() {
+        LocalDate start = points.get(points.size() - 1).date;
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < xy.x.size(); i++) {
+            LocalDate date = start.plusDays(xy.x.get(i));
+            GraphPoint ppoint = new GraphPoint(21, date, xy.y.get(i));
+            points_pred.add(ppoint);
+            stringBuilder.append(ppoint.getDate() + " : " + ppoint.getMMR() + "\n");
+        }
+        Log.d("predicted points", stringBuilder.toString());
+        PrintMMRS_pred(currentSeasonId);
+    }
+
+    private void PrintMMRS_pred(int seasonId){
+        LineData lineData = new LineData();
+        ArrayList<Entry> chart = new ArrayList<>();
+        StringBuilder stringBuilder = new StringBuilder();
+        ArrayList<String> Dates = new ArrayList<>();
+
+        for (int i = 0; i < points_pred.size(); i++) {
+            if (points_pred.get(i).getSeasoonId() == seasonId) {
+                chart.add(new Entry(i, points_pred.get(i).getMMR()));
+                Dates.add(points_pred.get(i).getDate().format(DateTimeFormatter.ofPattern("yy/MM/dd")));
+                stringBuilder.append(i + " : " + points_pred.get(i).getDate() + "(" + points_pred.get(i).getSeasoonId() + ") : " + points_pred.get(i).getMMR() + "\n");
+            }
+        }
+
+        LineDataSet lineDataSet = new LineDataSet(chart, "Predicted MMR");
+        lineDataSet.setColor(Color.GREEN);
+        lineData.addDataSet(lineDataSet);
+
+        //그래프 설정
+        XAxis x = act_user.mmrGraph_pred.getXAxis();
+        x.setPosition(XAxis.XAxisPosition.BOTTOM);
+        act_user.mmrGraph_pred.getAxisRight().setEnabled(false);
+        act_user.mmrGraph_pred.getDescription().setEnabled(false);
+        act_user.mmrGraph_pred.setTouchEnabled(true);
+        act_user.mmrGraph_pred.setDragXEnabled(true);
+        act_user.mmrGraph_pred.setVisibleXRange(1, 5);
+        act_user.mmrGraph_pred.setVisibleXRangeMaximum(5);
+        act_user.mmrGraph_pred.moveViewToX(lineDataSet.getEntryCount());
+        //그래프 적용
+        act_user.mmrGraph_pred.setData(lineData);
+        x.setValueFormatter(new IndexAxisValueFormatter(Dates));
+        act_user.mmrGraph_pred.invalidate();
+        Log.d("MMRS_pred", stringBuilder.toString());
     }
 
     private void PrintMMRS(int seasonId) {
@@ -407,8 +481,7 @@ public class thd_Request extends Thread {
         act_user.mmrGraph.getDescription().setEnabled(false);
         act_user.mmrGraph.setTouchEnabled(true);
         act_user.mmrGraph.setDragXEnabled(true);
-//        act_user.mmrGraph.setVisibleXRange(1, 5);
-        //todo 파이썬으로 csv보내서 결과 받고 표시하기
+        act_user.mmrGraph.setVisibleXRange(1, 5);
         act_user.mmrGraph.setVisibleXRangeMaximum(5);
         act_user.mmrGraph.moveViewToX(lineDataSet.getEntryCount());
         //그래프 적용

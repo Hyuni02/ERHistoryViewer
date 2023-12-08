@@ -51,6 +51,10 @@ def prediction2():
     # Load score data
     mmrGiven = parse[1:]
 
+    if len(mmrGiven) < 10:
+        print("데이터 부족")
+        return
+
     # 주어진 (x, y) 좌표 데이터
     x = mmrGiven[:,0] + 1  # x 값
     y = mmrGiven[:,1]  # y 값
@@ -76,9 +80,6 @@ def prediction2():
         pred.append([i, mmr])
         print(i,mmr)
     graph = np.array(pred)
-
-    # todo 정점 뽑기
-    # 자바에서 파싱할 때 <시작날짜 + 0번값 - 1 , mmr>
 
     # 실제 데이터와 좌우 대칭된 로그 함수의 그래프를 그립니다.
     plt.scatter(x, y, label='Original Data')

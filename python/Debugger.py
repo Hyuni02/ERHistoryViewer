@@ -18,8 +18,7 @@ def ExportJson(js, fileName="temp", printjs=False):
 # ExportJson(er.GetGameData("LoadingTip"))
 
 input_username = '한동그라미'
-# usernum = er.GetUserNum(input_username)
-usernum = '2603766'
+usernum = er.GetUserNum(input_username)
 season = er.GetSeason()
 ExportJson(season, "./jsons/season")
 

@@ -296,8 +296,8 @@ public class thd_Request extends Thread {
 
     String folder_name;
     String filename;
-    String serverURL = "http://10.50.99.165:8080";
-    //"http://10.50.99.165:8080/upload";
+//    String serverURL = "http://10.50.99.165:8080";
+    String serverURL = "http://49.50.164.182:8080";
 
     private void MakeCSVFile() {
         File newFolder = new File(folder_name);

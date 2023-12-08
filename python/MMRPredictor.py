@@ -1,8 +1,6 @@
 from flask import Flask, request, jsonify
 import numpy as np
 import os
-import json
-import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
@@ -11,7 +9,7 @@ app = Flask(__name__)
 def upload_MMR():
     return 'Upload mmr success'
 
-@app.route('/upload', methods=['POST', 'GET'])
+@app.route('/upload', methods=['POST'])
 def upload_file():
     uploaded_file = request.files['file']
 

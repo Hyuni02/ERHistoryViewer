@@ -1,11 +1,10 @@
 import requests
-import apikey
 import pandas as pd
 import pprint
 
-
+key = "AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U"
 baseURL = "https://open-api.bser.io/"
-header = {"x-api-key": f"{apikey.key}"}
+header = {"x-api-key": f"{key}"}
 
 currentSeasonId = 21
 

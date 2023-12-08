@@ -7,10 +7,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Properties;
 
 public class Requester {
     String EXCEPTION_ERROR = "Exception Occured. Check the url";
+
     public String Get(String mUrl) {
         try {
             URL url = new URL(mUrl);

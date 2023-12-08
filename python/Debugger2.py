@@ -52,7 +52,7 @@ def prediction2():
     mmrGiven = parse[1:]
 
     # 주어진 (x, y) 좌표 데이터
-    x = parse[0][1] - mmrGiven[:,0] + 1  # x 값
+    x = mmrGiven[:,0] + 1  # x 값
     y = mmrGiven[:,1]  # y 값
 
     # 로그 변환을 수행합니다.
@@ -70,13 +70,20 @@ def prediction2():
     # 좌우 대칭된 로그 함수의 y 값을 계산합니다.
     y_log_symmetric = a * np.log(1 / x_range) + b  # 1/x 대칭을 적용
 
+    pred = []
+    for i in range(1, int(parse[0][1])):
+        mmr = int(a * np.log(1 / i) + b)
+        pred.append([i, mmr])
+        print(i,mmr)
+    graph = np.array(pred)
+
     # todo 정점 뽑기
     # 자바에서 파싱할 때 <시작날짜 + 0번값 - 1 , mmr>
 
     # 실제 데이터와 좌우 대칭된 로그 함수의 그래프를 그립니다.
     plt.scatter(x, y, label='Original Data')
     plt.plot(x_range, y_log_symmetric, color='green', label='Symmetric Log Function')
-    plt.plot(x_range, y_log_symmetric, color='yellow', label='points')
+    plt.plot(graph[:,0], graph[:,1], 'y.', label='points')
     plt.xlabel('x')
     plt.ylabel('y')
     plt.legend()

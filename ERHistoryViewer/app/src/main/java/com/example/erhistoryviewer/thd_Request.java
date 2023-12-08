@@ -292,7 +292,7 @@ public class thd_Request extends Thread {
 
     String folder_name;
     String filename;
-    String serverURL = "http://192.168.55.223:8080";
+    String serverURL = "http://10.50.107.124:8080";
     //"http://10.50.99.165:8080/upload";
 
     private void MakeCSVFile() {
@@ -312,18 +312,18 @@ public class thd_Request extends Thread {
 
             //todo csv 내용 넣기
             StringBuilder data = new StringBuilder();
-            //1번째 줄에는 0, 시즌종료일-첫게임날짜
+            //1번째 줄에는 0, 시즌종료일-첫게임날짜 = 시즌 종료까지 남은 날짜
             LocalDate fin = LocalDate.parse(re_season.data.get(currentSeasonId).seasonEnd.split(" ")[0]);
             LocalDate start = points.get(points.size() - 1).date;
             long datediff = ChronoUnit.DAYS.between(start, fin);
             data.append("0," + datediff);
-            //2번째 줄 부터는 시즌종료일-게임날짜, mmrAfter
-            for(GraphPoint point : points){
-                start = point.getDate();
+            //2번째 줄 부터는 첫게임 날짜-게임날짜, mmrAfter
+            for (GraphPoint point : points) {
+                fin = point.getDate();
                 datediff = ChronoUnit.DAYS.between(start, fin);
-                data.append("\n"+datediff + "," + point.getMMR());
+                data.append("\n" + datediff + "," + point.getMMR());
             }
-            Log.d("Graph Points",data.toString());
+            Log.d("Graph Points", data.toString());
             fos.write(data.toString().getBytes());
             fos.close(); //스트림 닫기
             UploadFile();

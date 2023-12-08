@@ -1,8 +1,9 @@
 import requests
 import pandas as pd
 import pprint
+import apikey
 
-key = "AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U"
+key = apikey.key
 baseURL = "https://open-api.bser.io/"
 header = {"x-api-key": f"{key}"}
 

@@ -34,7 +34,7 @@ import java.util.List;
 
 public class thd_Request extends Thread {
     private final String thdName;
-    int sleeptime = 1000;
+    int sleeptime = 40;
     private int next = 0;
     private int level = 0;
     private int mostCharacter = 0;
@@ -87,7 +87,7 @@ public class thd_Request extends Thread {
             Thread.sleep(sleeptime);
 
             //유저 게임 기록 많이 받아오기
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 20; i++) {
                 Thread.sleep(sleeptime);
                 int seasonIdfromGame = Request_UserGame();
                 Log.d("next", Integer.toString(next));
@@ -280,7 +280,7 @@ public class thd_Request extends Thread {
 
             frg_historyitem.setArguments(bundle);
             act_user.fragmentTransaction.add(containerId, frg_historyitem);
-            Log.d("Fragment", game.gameId + " : " + game.gameRank);
+//            Log.d("Fragment", game.gameId + " : " + game.gameRank);
         }
         act_user.fragmentTransaction.commit();
     }
@@ -325,7 +325,7 @@ public class thd_Request extends Thread {
                 datediff = ChronoUnit.DAYS.between(start, fin);
                 data.append("\n" + datediff + "," + game.mmrAfter);
             }
-            Log.d("Graph Points", data.toString());
+//            Log.d("Graph Points", data.toString());
             fos.write(data.toString().getBytes());
             fos.close(); //스트림 닫기
             UploadFile();
@@ -417,7 +417,7 @@ public class thd_Request extends Thread {
             points_pred.add(ppoint);
             stringBuilder.append(ppoint.getDate() + " : " + ppoint.getMMR() + "\n");
         }
-        Log.d("predicted points", stringBuilder.toString());
+//        Log.d("predicted points", stringBuilder.toString());
         PrintMMRS_pred(currentSeasonId);
     }
 

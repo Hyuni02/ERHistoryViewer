@@ -411,6 +411,7 @@ public class thd_Request extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
             Log.e("file upload fail", e.toString());
+            UploadFile();
         }
     }
 

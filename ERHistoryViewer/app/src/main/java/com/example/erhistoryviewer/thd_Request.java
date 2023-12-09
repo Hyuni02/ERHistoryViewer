@@ -2,7 +2,6 @@ package com.example.erhistoryviewer;
 
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.os.Handler;
@@ -25,7 +24,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.attribute.UserPrincipalLookupService;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -123,17 +121,6 @@ public class thd_Request extends Thread {
             SetHistoryItem(lst_UserGames_rank, R.id.content_history_rank, "rank");
             SetHistoryItem(lst_UserGames_normal, R.id.content_history_normal, "normal");
             SetHistoryItem(lst_UserGames_cobalt, R.id.content_history_cobalt, "cobalt");
-
-            //게임 상세 기록 받아오기
-//            for (UserGame game : lst_UserGames_rank) {
-//                Request_GameDetail(game.gameId);
-//            }
-//            for (UserGame game : lst_UserGames_normal) {
-//                Request_GameDetail(game.gameId);
-//            }
-//            for (UserGame game : lst_UserGames_cobalt) {
-//                Request_GameDetail(game.gameId);
-//            }
 
             handler.post(new Runnable() {
                 @Override
@@ -277,8 +264,9 @@ public class thd_Request extends Thread {
             Bundle bundle = new Bundle();
             bundle.putString("matchmode", type);
 
-            int drawableResourceId = act_user.getResources().getIdentifier(act_user.CharacterCodetoName(game.characterNum).toLowerCase(), "drawable", act_user.getPackageName());
+            int drawableResourceId = act_user.dic_charactercoderesourceid.get(game.characterNum);
             bundle.putInt("img", drawableResourceId);
+            bundle.putInt("code", game.characterNum);
             bundle.putInt("gameId", game.gameId);
             bundle.putString("rank", Integer.toString(game.gameRank));
             bundle.putString("date", game.startDtm.split("T")[0]);
@@ -286,7 +274,7 @@ public class thd_Request extends Thread {
             int playerKill = game.playerKill;
             int playerDeaths = game.playerDeaths;
             int playerAssistant = game.playerAssistant;
-            bundle.putString("kda", playerKill + "(" + teamKill + ")/" + playerDeaths + "/" + playerAssistant);
+            bundle.putString("kda", playerKill + "(" + teamKill + ") / " + playerDeaths + " / " + playerAssistant);
             bundle.putString("dmg", Integer.toString(game.damageToPlayer));
 
             frg_historyitem.setArguments(bundle);
@@ -677,26 +665,20 @@ public class thd_Request extends Thread {
             if (seasonId != 0) {
                 userStat_rank = userStats;
             } else {
-                userStat_normal = userStats.userStats.get(2);
-                userStat_cobalt = userStats.userStats.get(3);
+                try {
+                    userStat_normal = userStats.userStats.get(2);
+                }
+                catch (Exception ex){
+                    Log.e("No Normal Data","");
+                }
+                try {
+                    userStat_cobalt = userStats.userStats.get(3);
+                }
+                catch (Exception ex){
+                    Log.e("No Cobalt Data","");
+                }
             }
         }
-    }
-
-    private RE_GameDetail Request_GameDetail(int gameId) {
-        Log.d("Request", "Game Detail : " + gameId);
-        String response_GameDetail = requester.Get("https://open-api.bser.io/v1/games/" + gameId);
-        RE_GameDetail gameDetail = converter.Convert_GameDetail(response_GameDetail);
-
-        act_user.lst_GameDetail.put(gameId, gameDetail);
-        Log.d("Put", Integer.toString(gameId));
-
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < gameDetail.userGames.size(); i++) {
-            stringBuilder.append("(" + gameDetail.userGames.get(i).gameRank + ")\t" + gameDetail.userGames.get(i).nickname + "\n");
-        }
-        Log.d("Game Detail", stringBuilder.toString());
-        return gameDetail;
     }
 
 }

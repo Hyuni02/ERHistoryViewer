@@ -36,6 +36,12 @@
                     android:textSize="34sp" />
 
                 <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="K(TK)/D/A" />
+
+                <TextView
                     android:id="@+id/txt_kda"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

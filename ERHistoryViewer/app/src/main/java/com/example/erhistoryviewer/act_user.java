@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,16 +34,14 @@ import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 public class act_user extends AppCompatActivity {
-
-
     String apikey = "AcUmvv9Rtp2aOoVKiDnqP4gdVzeqiTVYahP9Xi6U";
     EditText edt_userName;
     ImageButton btn_tolobby;
@@ -53,15 +50,13 @@ public class act_user extends AppCompatActivity {
     TextView txt_nickname;
     TextView txt_level;
     ImageView img_mostcharacter;
-
     static RequestQueue requestQueue;
-
     TabLayout tabLayout_info;
     TabLayout tabLayout_match;
-
     List<charIndex> CharacterIndex = new ArrayList<>();
     List<tierIndex> TierIndex = new ArrayList<>();
     String userNum = "";
+    Requester requester;
 
     public enum Selected_Info {userinfo, matchhistory}
 
@@ -100,34 +95,27 @@ public class act_user extends AppCompatActivity {
     TextView txt_nopred;
     ScrollView scv_gameDetail;
     Button btn_close;
-
     LineChart mmrGraph;
     LineChart mmrGraph_pred;
-    Map<Integer, RE_GameDetail> lst_GameDetail = new HashMap<>();
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
     FrameLayout layout_loading;
     ImageView img_loading;
-
+    LinearLayout layout_detail;
+    Converter converter;
+    Map<Integer, Integer> dic_charactercoderesourceid = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_user);
-
         Init();
-
         SetViews();
 
-        layout_loading.setVisibility(View.VISIBLE);
-        int randint = (int) (Math.random() * 10 % 7);
-        Log.d("randint", Integer.toString(randint));
-        img_loading.setImageResource(getResources().getIdentifier("hello"+randint, "drawable", getPackageName()));
+        OpenLoading();
 
         Log.d("userNum", userNum);
 
         SetOnClick();
-
 
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -138,8 +126,17 @@ public class act_user extends AppCompatActivity {
         thd_request.start();
     }
 
+    public void OpenLoading(){
+        layout_loading.setVisibility(View.VISIBLE);
+        int randint = (int) (Math.random() * 10 % 7);
+        Log.d("randint", Integer.toString(randint));
+        img_loading.setImageResource(getResources().getIdentifier("hello"+randint, "drawable", getPackageName()));
+    }
+
     private void Init() {
         userNum = getIntent().getStringExtra("userNum");
+        requester = new Requester();
+        converter = new Converter();
 
         //캐릭터ID 파일 읽기
         AssetManager assetManager = this.getAssets();
@@ -153,6 +150,9 @@ public class act_user extends AppCompatActivity {
             }
         } catch (IOException | CsvException e) {
             e.printStackTrace();
+        }
+        for(charIndex character : CharacterIndex){
+            dic_charactercoderesourceid.put(Integer.parseInt(character.code), CharacterCodetoResourceId(Integer.parseInt(character.code)));
         }
 
         //점수별 티어 파일 읽기
@@ -215,21 +215,24 @@ public class act_user extends AppCompatActivity {
         txt_winRate_cobalt = findViewById(R.id.txt_winRate_cobalt);
 
         scv_gameDetail = findViewById(R.id.scv_GameDetail);
+        layout_detail = findViewById(R.id.layout_detail);
         btn_close = findViewById(R.id.btn_close);
     }
 
     public String CharacterCodetoName(int code) {
         return CharacterIndex.get(code - 1).name_E;
     }
-
+    public int CharacterCodetoResourceId(int code){
+        return getResources().getIdentifier(CharacterCodetoName(code).toLowerCase(), "drawable", getPackageName());
+    }
     private void SetOnClick() {
-        btn_search.setOnClickListener(v -> Request_UserNum());
+        btn_search.setOnClickListener(v -> Request_UserNum(null));
         btn_close.setOnClickListener(v->Close_GameDetail());
         img_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 edt_userName.setText(txt_nickname.getText());
-                Request_UserNum();
+                Request_UserNum(null);
             }
         });
 
@@ -276,6 +279,7 @@ public class act_user extends AppCompatActivity {
 
     private void Close_GameDetail(){
         scv_gameDetail.setVisibility(View.GONE);
+        layout_detail.removeAllViews();
     }
 
     private void ChangeTab_Info(int index) {
@@ -351,9 +355,15 @@ public class act_user extends AppCompatActivity {
         }
     }
 
-    private void Request_UserNum() {
+    public void Request_UserNum(String input) {
         Log.d("Request", "Request UserNum");
-        String userName = edt_userName.getText().toString();
+        String userName;
+        if(input.isEmpty()){
+            userName = edt_userName.getText().toString();
+        }
+        else{
+            userName = input;
+        }
 
         StringRequest request = new StringRequest(
                 Request.Method.GET,
@@ -404,4 +414,6 @@ public class act_user extends AppCompatActivity {
         Toast toast = Toast.makeText(this, data, Toast.LENGTH_SHORT);
         toast.show();
     }
+
+
 }

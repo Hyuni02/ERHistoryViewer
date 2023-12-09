@@ -57,7 +57,7 @@
 3. [네이버 클라우드](https://www.ncloud.com/):link:
 
 #### 설치 및 실행
-###### 안드로이드 스튜디오 내에서 실행
+###### 안드로이드 스튜디오 내에서 실행 (API 34 이상의 기기 필요)
 <details>
 <summary>1. 가상머신으로 실행하기</summary>
 
@@ -69,6 +69,8 @@
 </details>
 <details>
 <summary>2. 모바일 기기에서 실행하기</summary>
+
+   - [모바일 기기 연결하기](https://developer.android.com/studio/run/device?hl=ko)![모바일 기기 선택](/readmeimgs/기기연결.png)
 </details>
 
 

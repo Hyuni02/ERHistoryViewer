@@ -64,9 +64,7 @@ public class act_lobby extends AppCompatActivity {
         StringRequest request = new StringRequest(
                 Request.Method.GET,
                 "https://open-api.bser.io/v1/user/nickname?query="+userName,
-                response -> {
-                    Response_UserNum(response);
-                    },
+                this::Response_UserNum,
                 error -> {
                     println(error.toString());
                     Log.e("UserNum", error.toString());

@@ -13,7 +13,7 @@
 6. [라이센스](#-라이센스)
 7. [참고문헌](#-참고문헌)
 
-### 1. [<u>*이터널리턴*</u>](https://playeternalreturn.com/main?hl=ko-KR) 이란?
+### 1. [<u>*이터널리턴*</u>](https://playeternalreturn.com/main?hl=ko-KR) :link: 이란?
 ![이터널리턴배경](/readmeimgs/이터널리턴배경.png)<br>
 - 넵튠의 자회사 님블뉴런에서 만든 쿼터뷰 배틀로얄
 - 게임당 최대 24명의 플레이어가 참여하여 파밍한 물품들을
@@ -35,39 +35,86 @@
 
 ### 3. 시연영상 (업로드 예정)
 
+
+
+
+
+
+
+
+
+
 ### 4. [이터널리턴 OpenAPI](https://developer.eternalreturn.io/) :link:
 ![이터널리턴개발자포털](/readmeimgs/이터널리턴api사이트.png)<br>
-[이터널리턴 개발자 포털 ](https://developer.eternalreturn.io/)<br><br>
+[이터널리턴 개발자 포털 ](https://developer.eternalreturn.io/):link:<br><br>
 ![개발자디스코드](/readmeimgs/개발자디스코드.png)
-[이터널리턴 개발자 디스코드](https://discord.com/invite/b4XxYet2qk)
+[이터널리턴 개발자 디스코드](https://discord.com/invite/b4XxYet2qk):link:
 
 ### 사용방법
 #### 작업도구
-1. [안드로이드 스튜디오(Giraffe)](https://developer.android.com/studio?hl=ko)
-2. [파이참(2023.2.3)](https://www.jetbrains.com/ko-kr/pycharm/download/?section=windows)
-3. [네이버 클라우드](https://www.ncloud.com/)
+1. [안드로이드 스튜디오(Giraffe)](https://developer.android.com/studio?hl=ko):link:
+2. [파이참(2023.2.3)](https://www.jetbrains.com/ko-kr/pycharm/download/?section=windows):link:
+3. [네이버 클라우드](https://www.ncloud.com/):link:
 
 #### 설치 및 실행
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 #### 환경설정
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### 라이센스
 
+
+
+
+
+
+
+
+
+
+
+
+
 ### 참고문헌
 #### 영감
-- [닥지지-전적검색사이트](https://dak.gg/er)
+- [닥지지-전적검색사이트](https://dak.gg/er):link:
 #### 이터널리턴
-- [이터널리턴 공식 홈페이지](https://playeternalreturn.com/main?hl=ko-KR)
-- [이터널리턴 개발자 포털](https://developer.eternalreturn.io/)
-- [이터널리턴 팬키트](https://drive.google.com/drive/folders/1bgW32L09YPpRgQKtH4C_TAd3Kr0N9Y90)
-- [나무위키-이터널리턴](https://namu.wiki/w/%EC%9D%B4%ED%84%B0%EB%84%90%20%EB%A6%AC%ED%84%B4#s-1)
+- [이터널리턴 공식 홈페이지](https://playeternalreturn.com/main?hl=ko-KR):link:
+- [이터널리턴 개발자 포털](https://developer.eternalreturn.io/):link:
+- [이터널리턴 팬키트](https://drive.google.com/drive/folders/1bgW32L09YPpRgQKtH4C_TAd3Kr0N9Y90):link:
+- [나무위키-이터널리턴](https://namu.wiki/w/%EC%9D%B4%ED%84%B0%EB%84%90%20%EB%A6%AC%ED%84%B4#s-1):link:
 #### 안드로이드 스튜디오
-- [안드로이드 스튜디오 꺾은선 그래프 만들기](https://stickode.tistory.com/363)
-- [안드로이드 스튜디오 HttpURLConnection](https://android-uni.tistory.com/9)
-- [안드로이드 스튜디오 Thread 사용방법](https://itmining.tistory.com/4)
-- [자바 csv파일 입출력](https://bibi6666667.tistory.com/200)
+- [안드로이드 스튜디오 꺾은선 그래프 만들기](https://stickode.tistory.com/363):link:
+- [안드로이드 스튜디오 HttpURLConnection](https://android-uni.tistory.com/9):link:
+- [안드로이드 스튜디오 Thread 사용방법](https://itmining.tistory.com/4):link:
+- [자바 csv파일 입출력](https://bibi6666667.tistory.com/200):link:
+- [안드로이드 스튜디오 빌드하기](https://samgupsal.tistory.com/35):link:
 #### 서버
-- [우분투 가상환경 만들기](https://ssilook.tistory.com/entry/%EA%B0%80%EC%83%81%ED%99%98%EA%B2%BD-%EC%9A%B0%EB%B6%84%ED%88%ACUbuntu-%EA%B0%80%EC%83%81%ED%99%98%EA%B2%BD-%EB%A7%8C%EB%93%A4%EA%B8%B0)
-- [우분투 백그라운드 프로세스 실행](https://bongjacy.tistory.com/entry/%EB%B0%B1%EA%B7%B8%EB%9D%BC%EC%9A%B4%EB%93%9C%EC%97%90%EC%84%9C-%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EC%8B%A4%ED%96%89%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)
+- [우분투 가상환경 만들기](https://ssilook.tistory.com/entry/%EA%B0%80%EC%83%81%ED%99%98%EA%B2%BD-%EC%9A%B0%EB%B6%84%ED%88%ACUbuntu-%EA%B0%80%EC%83%81%ED%99%98%EA%B2%BD-%EB%A7%8C%EB%93%A4%EA%B8%B0):link:
+- [우분투 백그라운드 프로세스 실행](https://bongjacy.tistory.com/entry/%EB%B0%B1%EA%B7%B8%EB%9D%BC%EC%9A%B4%EB%93%9C%EC%97%90%EC%84%9C-%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EC%8B%A4%ED%96%89%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95):link:
 #### 기타
-- [EASYME.md 리드미 작성툴](https://www.easy-me.com/d#link)
+- [EASYME.md 리드미 작성툴](https://www.easy-me.com/d#link):link:

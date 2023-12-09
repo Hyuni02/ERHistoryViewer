@@ -57,8 +57,9 @@
 3. [네이버 클라우드](https://www.ncloud.com/):link:
 
 #### 설치 및 실행
-
-
+###### 안드로이드 스튜디오 내에서 실행
+- Virtual Device : Nexus 5 API 34
+- [안드로이드 스튜디오 가상머신 만들기](https://developer.android.com/studio/run/managing-avds?hl=ko) 참고 :link:
 
 
 

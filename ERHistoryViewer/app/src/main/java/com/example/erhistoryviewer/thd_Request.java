@@ -170,6 +170,12 @@ public class thd_Request extends Thread {
                 Log.d("MMR", sb.toString());
             }
 
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    act_user.layout_loading.setVisibility(View.GONE);
+                }
+            });
             Log.d("done", "done");
         } catch (InterruptedException e) {
             e.printStackTrace();

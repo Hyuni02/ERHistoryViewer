@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,10 +35,12 @@ import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class act_user extends AppCompatActivity {
 
@@ -104,16 +107,22 @@ public class act_user extends AppCompatActivity {
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
+    FrameLayout layout_loading;
+    ImageView img_loading;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_user);
 
-        //todo 로딩창 구현
-
         Init();
 
         SetViews();
+
+        layout_loading.setVisibility(View.VISIBLE);
+        int randint = (int) (Math.random() * 10 % 7);
+        Log.d("randint", Integer.toString(randint));
+        img_loading.setImageResource(getResources().getIdentifier("hello"+randint, "drawable", getPackageName()));
 
         Log.d("userNum", userNum);
 
@@ -162,6 +171,9 @@ public class act_user extends AppCompatActivity {
     }
 
     private void SetViews() {
+        layout_loading = findViewById(R.id.layout_loading);
+        img_loading = findViewById(R.id.img_loading);
+
         btn_tolobby = findViewById(R.id.btn_tolobby);
         btn_search = findViewById(R.id.btn_search);
         img_refresh = findViewById(R.id.img_refresh);

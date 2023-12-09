@@ -31,7 +31,6 @@
    </details>
 - [이터널리턴 Open API](https://developer.eternalreturn.io/):link:의 존재를 알게됨
 - 뭔가 자신감이 생김
-   
 
 ### 3. 시연영상 (업로드 예정)
 
@@ -47,7 +46,7 @@
 ### 4. [이터널리턴 OpenAPI](https://developer.eternalreturn.io/) :link:
 ![이터널리턴개발자포털](/readmeimgs/이터널리턴api사이트.png)<br>
 [이터널리턴 개발자 포털 ](https://developer.eternalreturn.io/):link:<br><br>
-![개발자디스코드](/readmeimgs/개발자디스코드.png)
+![개발자디스코드](/readmeimgs/개발자디스코드.png)<br>
 [이터널리턴 개발자 디스코드](https://discord.com/invite/b4XxYet2qk):link:
 
 ### 5. 사용방법
@@ -76,13 +75,8 @@
    - 성공적 연결!(시스템 테마 : dark) ![모바일 실행](/readmeimgs/모바일실행.jpg):link:
 </details>
 
-###### apk를 이용해서 설치하기(작성예정)
-
-
-
-
-
-
+###### apk를 이용해서 설치하기
+- ERHistoryViwer/ERHistoryViwer/app/release/app-release.apk 설치
 
 ### 6. 주요 기능
 <details>
@@ -119,15 +113,6 @@
     - [생성된 IP]를 크롬 주소창에 입력했을 때 "Upload mmr success"출력시 정상 작동 상태
     - 안드로이드 스튜디오 내 thd_Request.java 파일의 serverURL을 [생성된IP]로 변경
     </details>
-
-
-
-
-
-
-
-
-
 
 ### 7. 라이센스(작성 예정)
 

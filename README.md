@@ -58,10 +58,18 @@
 
 #### 설치 및 실행
 ###### 안드로이드 스튜디오 내에서 실행
-- Virtual Device : Nexus 5 API 34
-- [안드로이드 스튜디오 가상머신 만들기](https://developer.android.com/studio/run/managing-avds?hl=ko) 참고 :link:
+<details>
+<summary>1. 가상머신으로 실행하기</summary>
 
-
+   - Virtual Device : Nexus 5 API 34
+   - [안드로이드 스튜디오 가상머신 만들기](https://developer.android.com/studio/run/managing-avds?hl=ko) 참고 :link:
+   - 가상머신 전원 켜기 ![가상머신리스트](/readmeimgs/가상머신리스트.png)
+   - 실행 버튼 누르기 ![세팅1](/readmeimgs/세팅1.png)
+   - 성공적 실행!<br>![실행예시](/readmeimgs/실행예시.png)
+</details>
+<details>
+<summary>2. 모바일 기기에서 실행하기</summary>
+</details>
 
 
 
@@ -119,3 +127,7 @@
 - [우분투 백그라운드 프로세스 실행](https://bongjacy.tistory.com/entry/%EB%B0%B1%EA%B7%B8%EB%9D%BC%EC%9A%B4%EB%93%9C%EC%97%90%EC%84%9C-%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EC%8B%A4%ED%96%89%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95):link:
 #### 기타
 - [EASYME.md 리드미 작성툴](https://www.easy-me.com/d#link):link:
+
+### 이스터에그
+![하트](/readmeimgs/heartlaugh.png)<br>
+하트를 쓰다듬어 주세요

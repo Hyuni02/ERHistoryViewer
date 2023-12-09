@@ -1,16 +1,12 @@
 package com.example.erhistoryviewer;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,11 +18,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,19 +48,9 @@ public class act_lobby extends AppCompatActivity {
     }
 
     private void SetOnClick(){
-        btn_search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Request_UserNum();
-            }
-        });
+        btn_search.setOnClickListener(v -> Request_UserNum());
 
-        findViewById(R.id.img_logo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ClickLogo();
-            }
-        });
+        findViewById(R.id.img_logo).setOnClickListener(v -> ClickLogo());
     }
 
     private void ClickLogo(){

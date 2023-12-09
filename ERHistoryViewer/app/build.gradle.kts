@@ -8,8 +8,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.erhistoryviewer"
-        minSdk = 34
-        targetSdk = 34
+        minSdk = 31
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
 

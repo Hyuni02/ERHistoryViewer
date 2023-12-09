@@ -122,17 +122,21 @@
 - [EASYME.md 리드미 작성툴](https://www.easy-me.com/d#link):link:
 
 ### ?. 이스터에그
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<title>hart</title>
 <script>
     function clickhart(){
         document.getElementById("hart").src = "readmeimgs/hartshocked.jpg";
+        document.getElementById("desc").textContent = "앱에서도 쓰다듬어 주세요";
     }
 </script>
 </head>
 <body>
-    <img id="hart" onclick="clickhart()" src="readmeimgs/heartlaugh.png">
-    <p>하트를 쓰다듬어 주세요</p>
+    <img id="hart" onclick="clickhart()" src="readmeimgs/heartlaugh.png" alt="하트">
+    <p id="desc">하트를 쓰다듬어 주세요</p>
 </body>
 </html>
 

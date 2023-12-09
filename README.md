@@ -9,9 +9,9 @@
 5. [사용방법](#-사용방법)
    - [작업도구](#-작업도구)
    - [설치 및 실행](#-설치-및-실행)
-   - [환경설정](#-환경설정)
-6. [라이센스](#-라이센스)
-7. [참고문헌](#-참고문헌)
+6. [주요 기능](#-주요기능)
+7. [라이센스](#-라이센스)
+8. [참고문헌](#-참고문헌)
 
 ### 1. [<u>*이터널리턴*</u>](https://playeternalreturn.com/main?hl=ko-KR) :link: 이란?
 ![이터널리턴배경](/readmeimgs/이터널리턴배경.png)<br>
@@ -57,11 +57,11 @@
 3. [네이버 클라우드](https://www.ncloud.com/):link:
 
 #### 설치 및 실행
-###### 안드로이드 스튜디오 내에서 실행 (API 34 이상의 기기 필요)
+###### 안드로이드 스튜디오 내에서 실행 (API 31 이상의 기기 필요)
 <details>
 <summary>1. 가상머신으로 실행하기</summary>
 
-   - Virtual Device : Nexus 5 API 34
+   - Virtual Device : Nexus 5 API 34(추천)
    - [안드로이드 스튜디오 가상머신 만들기](https://developer.android.com/studio/run/managing-avds?hl=ko) 참고 :link:
    - 가상머신 전원 켜기 ![가상머신리스트](/readmeimgs/가상머신리스트.png)
    - 실행 버튼 누르기 ![세팅1](/readmeimgs/세팅1.png)
@@ -71,6 +71,7 @@
 <summary>2. 모바일 기기에서 실행하기</summary>
 
    - [모바일 기기 연결하기](https://developer.android.com/studio/run/device?hl=ko)![모바일 기기 선택](/readmeimgs/기기연결.png)
+   - 성공적 연결!(시스템 테마 : dark) ![모바일 실행](/readmeimgs/모바일실행.jpg)
 </details>
 
 
@@ -82,7 +83,11 @@
 
 
 
-#### 환경설정
+
+
+
+
+### 7. 라이센스
 
 
 
@@ -96,21 +101,7 @@
 
 
 
-### 라이센스
-
-
-
-
-
-
-
-
-
-
-
-
-
-### 참고문헌
+### 8. 참고문헌
 #### 영감
 - [닥지지-전적검색사이트](https://dak.gg/er):link:
 #### 이터널리턴
@@ -130,6 +121,18 @@
 #### 기타
 - [EASYME.md 리드미 작성툴](https://www.easy-me.com/d#link):link:
 
-### 이스터에그
-![하트](/readmeimgs/heartlaugh.png)<br>
-하트를 쓰다듬어 주세요
+### ?. 이스터에그
+<html>
+<head>
+<script>
+    function clickhart(){
+        document.getElementById("hart").src = "readmeimgs/hartshocked.jpg";
+    }
+</script>
+</head>
+<body>
+    <img id="hart" onclick="clickhart()" src="readmeimgs/heartlaugh.png">
+    <p>하트를 쓰다듬어 주세요</p>
+</body>
+</html>
+

@@ -29,7 +29,7 @@
    - 제작자의 플레이타임<br>![플탐](/readmeimgs/플탐.png)
    - 제작자의 프로필<br>![프로필](/readmeimgs/프로필.png)
    </details>
-- 이터널리턴 Open API의 존재를 알게됨
+- [이터널리턴 Open API](https://developer.eternalreturn.io/):link:의 존재를 알게됨
 - 뭔가 자신감이 생김
    
 
@@ -63,19 +63,26 @@
 
    - Virtual Device : Nexus 5 API 34(추천)
    - [안드로이드 스튜디오 가상머신 만들기](https://developer.android.com/studio/run/managing-avds?hl=ko) 참고 :link:
-   - 가상머신 전원 켜기 ![가상머신리스트](/readmeimgs/가상머신리스트.png)
-   - 실행 버튼 누르기 ![세팅1](/readmeimgs/세팅1.png)
+   - 가상머신 전원 켜기<br>![가상머신리스트](/readmeimgs/가상머신리스트.png)
+   - 실행 버튼 누르기<br>![세팅1](/readmeimgs/세팅1.png)
    - 성공적 실행!<br>![실행예시](/readmeimgs/실행예시.png)
 </details>
 <details>
 
 <summary>2. 모바일 기기에서 실행하기</summary>
 
-   - [모바일 기기 연결하기](https://developer.android.com/studio/run/device?hl=ko)![모바일 기기 선택](/readmeimgs/기기연결.png)
-   - 성공적 연결!(시스템 테마 : dark) ![모바일 실행](/readmeimgs/모바일실행.jpg)
+   - [모바일 기기 연결하기](https://developer.android.com/studio/run/device?hl=ko):link:
+      <br>![모바일 기기 선택](/readmeimgs/기기연결.png)
+   - 성공적 연결!(시스템 테마 : dark) ![모바일 실행](/readmeimgs/모바일실행.jpg):link:
 </details>
 
-###### apk를 이용해서 설치하기
+###### apk를 이용해서 설치하기(작성예정)
+
+
+
+
+
+
 
 ### 6. 주요 기능
 <details>
@@ -122,7 +129,7 @@
 
 
 
-### 7. 라이센스
+### 7. 라이센스(작성 예정)
 
 
 

@@ -54,6 +54,9 @@ public class thd_Request extends Thread {
     ArrayList<UserGame> lst_UserGames_rank = new ArrayList<>();
     ArrayList<UserGame> lst_UserGames_normal = new ArrayList<>();
     ArrayList<UserGame> lst_UserGames_cobalt = new ArrayList<>();
+    String folder_name;
+    String filename;
+    String serverURL = "http://49.50.164.182:8080";
 
     public thd_Request(String thdname, act_user act_user) {
         // 초기화 작업
@@ -299,11 +302,6 @@ public class thd_Request extends Thread {
         }
         return null;
     }
-
-    String folder_name;
-    String filename;
-//    String serverURL = "http://10.50.99.165:8080";
-    String serverURL = "http://49.50.164.182:8080";
 
     private void MakeCSVFile() {
         File newFolder = new File(folder_name);

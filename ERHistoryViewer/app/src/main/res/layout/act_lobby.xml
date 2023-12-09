@@ -75,6 +75,12 @@
         </LinearLayout>
     </HorizontalScrollView>
 
+    <ImageView
+        android:id="@+id/img_logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/hartlaugh" />
+
     <TextView
         android:id="@+id/txt_logo"
         android:layout_width="match_parent"
@@ -82,7 +88,7 @@
         android:autoSizeTextType="none"
         android:gravity="center"
         android:padding="5dp"
-        android:text="LOGO"
+        android:text="그님티"
         android:textSize="60sp" />
 
     <LinearLayout

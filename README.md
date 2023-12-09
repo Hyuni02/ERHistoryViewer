@@ -1,4 +1,4 @@
-# 그님티 ![풋 하는 이미지](/readmeimgs/.png)
+# 그님티<br>![풋 하는 이미지](/readmeimgs/heartlaugh.png)
 #### 이터널리턴 티어 예측 어플리케이션
 
 ## 목차

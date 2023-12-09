@@ -3,6 +3,7 @@ package com.example.erhistoryviewer;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -34,6 +35,7 @@ public class act_lobby extends AppCompatActivity {
     ImageButton btn_search;
     EditText edt_userName;
     LinearLayout lin_userHistory;
+    ImageView img_logo;
     static RequestQueue requestQueue;
 
     @Override
@@ -44,6 +46,7 @@ public class act_lobby extends AppCompatActivity {
         edt_userName = findViewById(R.id.edt_userName);
         lin_userHistory = findViewById(R.id.lin_userHistory);
         btn_search = findViewById(R.id.btn_search);
+        img_logo = findViewById(R.id.img_logo);
         
         // 버튼 기능 할당
         SetOnClick();
@@ -61,12 +64,16 @@ public class act_lobby extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.txt_logo).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.img_logo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ClickLogo();
             }
         });
+    }
+
+    private void ClickLogo(){
+        img_logo.setImageResource(R.drawable.hartshocked);
     }
 
     private void Request_UserNum() {

@@ -67,7 +67,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="Free Characters"
-        android:textSize="28dp" />
+        android:textSize="28sp" />
 
     <HorizontalScrollView
         android:id="@+id/hori_freeCharacter"

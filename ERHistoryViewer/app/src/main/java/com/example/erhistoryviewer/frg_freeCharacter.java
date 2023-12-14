@@ -1,6 +1,8 @@
 package com.example.erhistoryviewer;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,14 @@ public class frg_freeCharacter extends Fragment {
         btn_freeCharacter = view.findViewById(R.id.img_freecharacter);
 
         btn_freeCharacter.setImageResource(getArguments().getInt("img"));
+
+        btn_freeCharacter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://dak.gg/er/characters/" + getArguments().getString("charactername")));
+                startActivity(intent);
+            }
+        });
 
         return view;
     }

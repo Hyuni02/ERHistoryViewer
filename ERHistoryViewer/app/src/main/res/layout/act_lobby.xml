@@ -5,29 +5,6 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="Free Characters"
-        android:textSize="28dp" />
-
-    <HorizontalScrollView
-        android:id="@+id/hori_freeCharacter"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:padding="5dp"
-        android:visibility="visible">
-
-        <LinearLayout
-            android:id="@+id/layout_freeCharacter"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal" />
-    </HorizontalScrollView>
-
     <ImageView
         android:id="@+id/img_logo"
         android:layout_width="match_parent"
@@ -73,7 +50,8 @@
     <ScrollView
         android:id="@+id/vert_searchHistory"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/lin_userHistory"
@@ -81,4 +59,27 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"></LinearLayout>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Free Characters"
+        android:textSize="28dp" />
+
+    <HorizontalScrollView
+        android:id="@+id/hori_freeCharacter"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:padding="5dp"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/layout_freeCharacter"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
 </LinearLayout>

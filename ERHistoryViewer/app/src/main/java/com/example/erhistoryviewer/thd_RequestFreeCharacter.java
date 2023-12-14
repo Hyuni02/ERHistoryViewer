@@ -16,44 +16,46 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class thd_RequestFreeCharacter extends Thread{
+public class thd_RequestFreeCharacter extends Thread {
     final String thdname;
     act_lobby act_lobby;
     Requester requester;
     Converter converter;
 
 
-    public thd_RequestFreeCharacter(String thdname, act_lobby act_lobby){
+    public thd_RequestFreeCharacter(String thdname, act_lobby act_lobby) {
         this.thdname = thdname;
         this.act_lobby = act_lobby;
         requester = new Requester();
         converter = new Converter();
     }
 
-    public void run(){
+    public void run() {
         Log.i("시작된 스레드", thdname);
-        try{
+        try {
             Request_FreeCharacter();
-        }
-        catch (Exception ex){
-            Log.e("error",ex.toString());
+        } catch (Exception ex) {
+            Log.e("error", ex.toString());
         }
 
     }
 
 
-
-    private void Request_FreeCharacter(){
+    private void Request_FreeCharacter() {
         Log.d("Request", "Free Character");
         String response_Season = requester.Get("https://open-api.bser.io/v1/freeCharacters/2");
         RE_FreeCharacter freeCharacter = converter.Convert_FreeCharacter(response_Season);
         StringBuilder stringBuilder = new StringBuilder();
-        //todo 로비에 표시하기
-        for( int i=0;i<freeCharacter.freeCharacters.size();i++){
+        for (int i = 0; i < freeCharacter.freeCharacters.size(); i++) {
+            if (i - 1 >= 0 && freeCharacter.freeCharacters.get(i).equals(freeCharacter.freeCharacters.get(i - 1))) {
+                continue; //api에서 중복된 값을 줌
+            }
             frg_freeCharacter frg_freeCharacter = new frg_freeCharacter();
             Bundle bundle = new Bundle();
             int imgcode = act_lobby.dic_charactercoderesourceid.get(freeCharacter.freeCharacters.get(i));
-            bundle.putInt("img",imgcode);
+            bundle.putInt("img", imgcode);
+            String charactername = act_lobby.CharacterCodetoName(freeCharacter.freeCharacters.get(i));
+            bundle.putString("charactername", charactername);
             frg_freeCharacter.setArguments(bundle);
             act_lobby.fragmentTransaction.add(act_lobby.layout_freeCharacter.getId(), frg_freeCharacter);
         }

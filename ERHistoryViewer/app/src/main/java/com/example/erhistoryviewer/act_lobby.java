@@ -1,15 +1,19 @@
 package com.example.erhistoryviewer;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -17,8 +21,15 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class act_lobby extends AppCompatActivity {
@@ -27,8 +38,14 @@ public class act_lobby extends AppCompatActivity {
     EditText edt_userName;
     LinearLayout lin_userHistory;
     ImageView img_logo;
+    LinearLayout layout_freeCharacter;
     static RequestQueue requestQueue;
 
+    FragmentManager fragmentManager = getSupportFragmentManager();
+    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    Map<Integer, Integer> dic_charactercoderesourceid = new HashMap<>();
+
+    List<charIndex> CharacterIndex = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,19 +55,48 @@ public class act_lobby extends AppCompatActivity {
         lin_userHistory = findViewById(R.id.lin_userHistory);
         btn_search = findViewById(R.id.btn_search);
         img_logo = findViewById(R.id.img_logo);
-        
+        layout_freeCharacter = findViewById(R.id.layout_freeCharacter);
+
+        ReadCharacterIndex();
         // 버튼 기능 할당
         SetOnClick();
 
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(getApplicationContext());
         }
+
+        thd_RequestFreeCharacter thd_request = new thd_RequestFreeCharacter("API Request Thread", this);
+        thd_request.start();
     }
 
     private void SetOnClick(){
         btn_search.setOnClickListener(v -> Request_UserNum());
 
         findViewById(R.id.img_logo).setOnClickListener(v -> ClickLogo());
+    }
+    private void ReadCharacterIndex(){
+        //캐릭터ID 파일 읽기
+        AssetManager assetManager = this.getAssets();
+        try {
+            InputStream inputStream = assetManager.open("characterindex.csv");
+            CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, "EUC-KR"));
+            List<String[]> allContent = csvReader.readAll();
+            for (String[] content : allContent) {
+                Log.d("CharacterIndex", content[0] + "\t" + content[1] + "\t" + content[2]);
+                CharacterIndex.add(new charIndex(content[0], content[1], content[2]));
+            }
+        } catch (IOException | CsvException e) {
+            e.printStackTrace();
+        }
+        for (charIndex character : CharacterIndex) {
+            dic_charactercoderesourceid.put(Integer.parseInt(character.code), CharacterCodetoResourceId(Integer.parseInt(character.code)));
+        }
+    }
+    public int CharacterCodetoResourceId(int code) {
+        return getResources().getIdentifier(CharacterCodetoName(code).toLowerCase(), "drawable", getPackageName());
+    }
+    public String CharacterCodetoName(int code) {
+        return CharacterIndex.get(code - 1).name_E;
     }
 
     private void ClickLogo(){

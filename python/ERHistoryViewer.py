@@ -67,3 +67,9 @@ def download(url, file_name):
 def GetGameDetail(gameid):
     response_gamedetail = requests.get(f"{baseURL}v1/games/{gameid}", headers=header)
     return response_gamedetail.json()
+
+# 로테이션 캐릭터 정보 획득
+def GetFreeCharacters():
+    response_freecharacter = requests.get(f"{baseURL}v1/freeCharacters/2",headers=header)
+    return response_freecharacter.json()
+

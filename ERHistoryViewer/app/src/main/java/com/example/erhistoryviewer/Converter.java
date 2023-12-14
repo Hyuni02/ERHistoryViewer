@@ -27,6 +27,12 @@ public class Converter {
         return re;
     }
 
+    public RE_FreeCharacter Convert_FreeCharacter(String response){
+        Gson gson = new Gson();
+        RE_FreeCharacter re = gson.fromJson(response, RE_FreeCharacter.class);
+        return re;
+    }
+
     public RE_GameDetail Convert_GameDetail(String response){
         Gson gson = new Gson();
         RE_GameDetail re = gson.fromJson(response, RE_GameDetail.class);

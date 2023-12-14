@@ -35,7 +35,7 @@
 
 ### 3. 시연영상 (업로드 예정)
 
-[시연영상 보러가기 Youtube](https://youtu.be/Sjv30tWRXpQ):link:
+[시연영상 보러가기 Youtube](https://youtu.be/Xv2-IaoCUNg):link:
 
 ### 4. [이터널리턴 OpenAPI](https://developer.eternalreturn.io/) :link:
 ![이터널리턴개발자포털](/readmeimgs/이터널리턴api사이트.png)<br>
@@ -87,6 +87,8 @@
 </details>
 
 ##### 클라이언트 (어플리케이션)
+- 이번주 무료 플레이 가능 캐릭터 리스트 표시
+  + 캐릭터 클릭 시 dak.gg의 해당 캐릭터 가이드 페이지로 이동
 - 닉네임으로 유저찾기(닉네임 -> 유저ID)
 - 시즌 정보 받아오기
 - 유저ID로 유저 정보 불러오기
